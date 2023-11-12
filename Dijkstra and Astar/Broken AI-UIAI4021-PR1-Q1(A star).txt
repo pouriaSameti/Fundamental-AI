@@ -1,0 +1,24 @@
+A* Algorithm
+Execution Time: 0.0s
+.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-.-
+From: Imam Khomeini International Airport - Tehran, Iran
+To: Atatürk International Airport - Istanbul, Turkey
+Duration: 2040.98km
+Time: 3.15h
+Price: 238.35$
+----------------------------
+From: Atatürk International Airport - Istanbul, Turkey
+To: John F Kennedy International Airport - New York, United States
+Duration: 8051.74km
+Time: 10.01h
+Price: 836.77$
+----------------------------
+From: John F Kennedy International Airport - New York, United States
+To: Raleigh Durham International Airport - Raleigh-durham, United States
+Duration: 686.5km
+Time: 1.62h
+Price: 131.7$
+----------------------------
+Total Price: 1207$
+Total Duration: 10779.22km
+Total Time: 15h
