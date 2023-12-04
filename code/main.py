@@ -207,19 +207,40 @@ if __name__ == '__main__':
     states = list(range(env.nS))
     policy = {}  # key:state  value:action
 
+    discount_factor = 0.9
+
     policy_initialization(policy, states, [*actions.keys()])
+    v_star = np.zeros(len(states))
 
 
     for __ in range(max_iter_number):
         # TODO: Implement the agent policy here
         # Note: .sample() is used to sample random action from the environment's action space
         # Choose an action (Replace this random action with your agent's policy)
-        action = env.action_space.sample()
 
-        # Perform the action and receive feedback from the environment
-        next_state, reward, done, truncated, info = env.step(action)
+        # action = env.action_space.sample()
+        #
+        # # Perform the action and receive feedback from the environment
+        # next_state, reward, done, truncated, info = env.step(action)
+        #
+        # if done or truncated:
+        #     observation, info = env.reset()
 
-        if done or truncated:
-            observation, info = env.reset()
+        # convergenceTrack.append(np.linalg.norm(valueFunctionVector, 2))
+        v = np.zeros(len(states))
+        for state in q:
+            outerSum = 0
+            for action in q[state]:
+                innerSum = 0
+                for probability, nextState, reward, isTerminalState in q[state][action]:
+                    # print(probability, nextState, reward, isTerminalState)
+                    innerSum = innerSum + probability * (reward + discount_factor * v_star[nextState])
+                outerSum = outerSum + 0.33 * innerSum
+            v[state] = outerSum
+
+        v_star = v
     # Close the environment
+    print(q)
+    print(v_star)
     env.close()
+
