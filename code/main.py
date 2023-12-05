@@ -5,7 +5,6 @@ from gymnasium.envs.toy_text.cliffwalking import CliffWalkingEnv
 from gymnasium.error import DependencyNotInstalled
 from os import path
 
-
 # Do not change this class
 UP = 0
 RIGHT = 1
@@ -31,9 +30,9 @@ class CliffWalking(CliffWalkingEnv):
                 new_col = np.random.randint(0, 11)
                 state = (new_row, new_col)
                 if (
-                    (state not in self.cliff_positions)
-                    and (state != self.start_state)
-                    and (state != self.terminal_state)
+                        (state not in self.cliff_positions)
+                        and (state != self.start_state)
+                        and (state != self.terminal_state)
                 ):
                     self._cliff[new_row, new_col] = True
                     if not self.is_valid():
@@ -60,6 +59,8 @@ class CliffWalking(CliffWalkingEnv):
 
         terminal_state = (self.shape[0] - 1, self.shape[1] - 1)
         is_terminated = tuple(new_position) == terminal_state
+        if is_terminated:
+            return [(1 / 3, new_state, 100, is_terminated)]
         return [(1 / 3, new_state, -1, is_terminated)]
 
     # DFS to check that it's a valid path.
@@ -203,6 +204,7 @@ if __name__ == '__main__':
     # Define the maximum number of iterations
     max_iter_number = 1000
     q = env.P
+    q_star = []
     actions = {0: "UP", 1: "RIGHT", 2: "DOWN", 3: "LEFT"}
     states = list(range(env.nS))
     policy = {}  # key:state  value:action
@@ -211,9 +213,11 @@ if __name__ == '__main__':
 
     policy_initialization(policy, states, [*actions.keys()])
     v_star = np.zeros(len(states))
-
+    v = np.zeros(len(states))
 
     for __ in range(max_iter_number):
+        pass
+
         # TODO: Implement the agent policy here
         # Note: .sample() is used to sample random action from the environment's action space
         # Choose an action (Replace this random action with your agent's policy)
@@ -226,21 +230,18 @@ if __name__ == '__main__':
         # if done or truncated:
         #     observation, info = env.reset()
 
-        # convergenceTrack.append(np.linalg.norm(valueFunctionVector, 2))
-        v = np.zeros(len(states))
-        for state in q:
-            outerSum = 0
-            for action in q[state]:
-                innerSum = 0
-                for probability, nextState, reward, isTerminalState in q[state][action]:
-                    # print(probability, nextState, reward, isTerminalState)
-                    innerSum = innerSum + probability * (reward + discount_factor * v_star[nextState])
-                outerSum = outerSum + 0.33 * innerSum
-            v[state] = outerSum
-
-        v_star = v
+        # # convergenceTrack.append(np.linalg.norm(valueFunctionVector, 2))
+        # for state in q:
+        #     for action in q[state]:
+        #         # innerSum = 0
+        #         for probability, nextState, reward, isTerminalState in q[state][action]:
+        #             # print(probability, nextState, reward, isTerminalState)
+        #             innerSum = innerSum + probability * (reward + discount_factor * v_star[nextState])
+        #         outerSum = outerSum + 0.33 * innerSum
+        #     v[state] = outerSum
+        #
+        # v_star = v
     # Close the environment
     print(q)
     print(v_star)
     env.close()
-
