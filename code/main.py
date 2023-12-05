@@ -60,7 +60,7 @@ class CliffWalking(CliffWalkingEnv):
         terminal_state = (self.shape[0] - 1, self.shape[1] - 1)
         is_terminated = tuple(new_position) == terminal_state
         if is_terminated:
-            return [(1 / 3, new_state, 100, is_terminated)]
+            return [(1 / 3, new_state, 150, is_terminated)]
         return [(1 / 3, new_state, -1, is_terminated)]
 
     # DFS to check that it's a valid path.
@@ -270,8 +270,8 @@ if __name__ == '__main__':
 
     v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor, max_iteration=max_iter_number)
     policy = policy_extraction(q_star)
-    print(v_star)
-    print(q_star)
+    # print(v_star)
+    # print(q_star)
     print(policy)
 
     for __ in range(max_iter_number):
@@ -280,7 +280,9 @@ if __name__ == '__main__':
         # Note: .sample() is used to sample random action from the environment's action space
         # Choose an action (Replace this random action with your agent's policy)
 
-        action = env.action_space.sample()
+        # action = env.action_space.sample()
+        action = policy[env.s]
+        print(env.s, action)
 
         # Perform the action and receive feedback from the environment
         next_state, reward, done, truncated, info = env.step(action)
