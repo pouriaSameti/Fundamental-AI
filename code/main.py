@@ -195,6 +195,14 @@ def policy_initialization(policy: dict, states: list, actions: list):
         policy[s] = np.random.choice(actions)
 
 
+def v_star_initialization(v_star: list):
+    v_star[47] = 100
+    for x, y in env.cliff_positions:
+        position = x * 12 + y
+        v_star[position] = -100
+    return v_star
+
+
 if __name__ == '__main__':
 
     # Create an environment
@@ -204,7 +212,10 @@ if __name__ == '__main__':
     # Define the maximum number of iterations
     max_iter_number = 1000
     q = env.P
-    q_star = []
+    q_star = [[0 for a in range(env.nA)] for _ in range(env.nS)]
+    v_star = np.zeros(env.nS)
+    v_star = v_star_initialization(list(v_star))
+
     actions = {0: "UP", 1: "RIGHT", 2: "DOWN", 3: "LEFT"}
     states = list(range(env.nS))
     policy = {}  # key:state  value:action
@@ -212,12 +223,8 @@ if __name__ == '__main__':
     discount_factor = 0.9
 
     policy_initialization(policy, states, [*actions.keys()])
-    v_star = np.zeros(len(states))
-    v = np.zeros(len(states))
 
     for __ in range(max_iter_number):
-        pass
-
         # TODO: Implement the agent policy here
         # Note: .sample() is used to sample random action from the environment's action space
         # Choose an action (Replace this random action with your agent's policy)
@@ -231,17 +238,12 @@ if __name__ == '__main__':
         #     observation, info = env.reset()
 
         # # convergenceTrack.append(np.linalg.norm(valueFunctionVector, 2))
-        # for state in q:
-        #     for action in q[state]:
-        #         # innerSum = 0
-        #         for probability, nextState, reward, isTerminalState in q[state][action]:
-        #             # print(probability, nextState, reward, isTerminalState)
-        #             innerSum = innerSum + probability * (reward + discount_factor * v_star[nextState])
-        #         outerSum = outerSum + 0.33 * innerSum
-        #     v[state] = outerSum
-        #
-        # v_star = v
+        for state in q:
+            for action in q[state]:
+                for probability, nextState, reward, isTerminalState in q[state][action]:
+                    # print(probability, nextState, reward, isTerminalState)
+                    q_star[state][action] = reward + probability * (discount_factor * v_star[nextState])
+    # print(q_star)
+
     # Close the environment
-    print(q)
-    print(v_star)
     env.close()
