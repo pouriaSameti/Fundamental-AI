@@ -238,6 +238,16 @@ def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: in
     return v_star, q_star
 
 
+def policy_extraction(q_star):
+    policy = {}  # key:state  value:direction
+
+    for index in range(len(q_star)):
+        state = q_star[index]
+        max_index = np.argmax(state)
+        policy[index] = max_index
+    return policy
+
+
 if __name__ == '__main__':
 
     # Create an environment
@@ -259,8 +269,10 @@ if __name__ == '__main__':
     policy_initialization(policy, states, [*actions.keys()])
 
     v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor, max_iteration=max_iter_number)
+    policy = policy_extraction(q_star)
     print(v_star)
     print(q_star)
+    print(policy)
 
     for __ in range(max_iter_number):
         pass
@@ -268,13 +280,13 @@ if __name__ == '__main__':
         # Note: .sample() is used to sample random action from the environment's action space
         # Choose an action (Replace this random action with your agent's policy)
 
-        # action = env.action_space.sample()
-        #
-        # # Perform the action and receive feedback from the environment
-        # next_state, reward, done, truncated, info = env.step(action)
-        #
-        # if done or truncated:
-        #     observation, info = env.reset()
+        action = env.action_space.sample()
+
+        # Perform the action and receive feedback from the environment
+        next_state, reward, done, truncated, info = env.step(action)
+
+        if done or truncated:
+            observation, info = env.reset()
 
     # Close the environment
     env.close()
