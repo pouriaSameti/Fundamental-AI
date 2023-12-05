@@ -203,6 +203,33 @@ def v_star_initialization(v_star: list):
     return v_star
 
 
+def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: int):
+    for _ in range(max_iteration):
+        for state in q:
+            for action in q[state]:
+                for probability, nextState, reward, isTerminalState in q[state][action]:
+                    if action == 0:
+                        probability1, nextState1, reward1, isTerminalState1 = q[state][action + 1][0]
+                        probability3, nextState3, reward3, isTerminalState3 = q[state][action + 3][0]
+                        q_star[state][action] = reward + discount_factor * (probability * v_star[nextState] + probability1 * v_star[nextState1] + probability3 * v_star[nextState3])
+                    elif action == 1:
+                        probability2, nextState2, reward2, isTerminalState2 = q[state][action + 1][0]
+                        probability0, nextState0, reward0, isTerminalState0 = q[state][action - 1][0]
+                        q_star[state][action] = reward + discount_factor * (probability * v_star[nextState] + probability2 * v_star[nextState2] + probability0 * v_star[nextState0])
+                    elif action == 2:
+                        probability1, nextState1, reward1, isTerminalState1 = q[state][action - 1][0]
+                        probability3, nextState3, reward3, isTerminalState3 = q[state][action + 1][0]
+                        q_star[state][action] = reward + discount_factor * (probability * v_star[nextState] + probability1 * v_star[nextState1] + probability3 * v_star[nextState3])
+                    else:
+                        probability2, nextState2, reward2, isTerminalState2 = q[state][action - 1][0]
+                        probability0, nextState0, reward0, isTerminalState0 = q[state][action - 3][0]
+                        q_star[state][action] = reward + discount_factor * (probability * v_star[nextState] + probability0 * v_star[nextState0] + probability2 * v_star[nextState2])
+
+            v_star[state] = max(q_star[state])
+
+    return v_star, q_star
+
+
 if __name__ == '__main__':
 
     # Create an environment
@@ -224,7 +251,10 @@ if __name__ == '__main__':
 
     policy_initialization(policy, states, [*actions.keys()])
 
+    v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor, max_iteration=1000)
+
     for __ in range(max_iter_number):
+        pass
         # TODO: Implement the agent policy here
         # Note: .sample() is used to sample random action from the environment's action space
         # Choose an action (Replace this random action with your agent's policy)
@@ -236,14 +266,6 @@ if __name__ == '__main__':
         #
         # if done or truncated:
         #     observation, info = env.reset()
-
-        # # convergenceTrack.append(np.linalg.norm(valueFunctionVector, 2))
-        for state in q:
-            for action in q[state]:
-                for probability, nextState, reward, isTerminalState in q[state][action]:
-                    # print(probability, nextState, reward, isTerminalState)
-                    q_star[state][action] = reward + probability * (discount_factor * v_star[nextState])
-    # print(q_star)
 
     # Close the environment
     env.close()
