@@ -211,19 +211,27 @@ def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: in
                     if action == 0:
                         probability1, nextState1, reward1, isTerminalState1 = q[state][action + 1][0]
                         probability3, nextState3, reward3, isTerminalState3 = q[state][action + 3][0]
-                        q_star[state][action] = reward + discount_factor * (probability * v_star[nextState] + probability1 * v_star[nextState1] + probability3 * v_star[nextState3])
+                        q_star[state][action] = (probability * (reward + discount_factor * v_star[nextState])) + \
+                                                (probability1 * (reward1 + discount_factor * v_star[nextState1])) + \
+                                                (probability3 * (reward3 + discount_factor * v_star[nextState3]))
                     elif action == 1:
                         probability2, nextState2, reward2, isTerminalState2 = q[state][action + 1][0]
                         probability0, nextState0, reward0, isTerminalState0 = q[state][action - 1][0]
-                        q_star[state][action] = reward + discount_factor * (probability * v_star[nextState] + probability2 * v_star[nextState2] + probability0 * v_star[nextState0])
+                        q_star[state][action] = (probability * (reward + discount_factor * v_star[nextState])) + \
+                                                (probability2 * (reward2 + discount_factor * v_star[nextState2])) + \
+                                                (probability0 * (reward0 + discount_factor * v_star[nextState0]))
                     elif action == 2:
                         probability1, nextState1, reward1, isTerminalState1 = q[state][action - 1][0]
                         probability3, nextState3, reward3, isTerminalState3 = q[state][action + 1][0]
-                        q_star[state][action] = reward + discount_factor * (probability * v_star[nextState] + probability1 * v_star[nextState1] + probability3 * v_star[nextState3])
+                        q_star[state][action] = (probability * (reward + discount_factor * v_star[nextState])) + \
+                                                (probability1 * (reward1 + discount_factor * v_star[nextState1])) + \
+                                                (probability3 * (reward3 + discount_factor * v_star[nextState3]))
                     else:
                         probability2, nextState2, reward2, isTerminalState2 = q[state][action - 1][0]
                         probability0, nextState0, reward0, isTerminalState0 = q[state][action - 3][0]
-                        q_star[state][action] = reward + discount_factor * (probability * v_star[nextState] + probability0 * v_star[nextState0] + probability2 * v_star[nextState2])
+                        q_star[state][action] = (probability * (reward + discount_factor * v_star[nextState])) + \
+                                                (probability2 * (reward2 + discount_factor * v_star[nextState2])) + \
+                                                (probability0 * (reward0 + discount_factor * v_star[nextState0]))
 
             v_star[state] = max(q_star[state])
 
@@ -241,7 +249,6 @@ if __name__ == '__main__':
     q = env.P
     q_star = [[0 for a in range(env.nA)] for _ in range(env.nS)]
     v_star = np.zeros(env.nS)
-    v_star = v_star_initialization(list(v_star))
 
     actions = {0: "UP", 1: "RIGHT", 2: "DOWN", 3: "LEFT"}
     states = list(range(env.nS))
@@ -251,7 +258,9 @@ if __name__ == '__main__':
 
     policy_initialization(policy, states, [*actions.keys()])
 
-    v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor, max_iteration=1000)
+    v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor, max_iteration=max_iter_number)
+    print(v_star)
+    print(q_star)
 
     for __ in range(max_iter_number):
         pass
