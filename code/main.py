@@ -298,10 +298,12 @@ if __name__ == '__main__':
 
     v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor, max_iteration=max_iter_number)
     policy = policy_extraction(q_star)
-    # print(v_star)
-    print(q_star)
-    print(policy)
 
+    # print(v_star)
+    # print(q_star)
+    # print(policy)
+
+    n_victory = 0
     for __ in range(max_iter_number):
         # TODO: Implement the agent policy here
         # Note: .sample() is used to sample random action from the environment's action space
@@ -309,15 +311,14 @@ if __name__ == '__main__':
 
         # action = env.action_space.sample()
         action = policy[env.s]
-        print(env.s, action)
 
         # Perform the action and receive feedback from the environment
         next_state, reward, done, truncated, info = env.step(action)
 
         if done or truncated:
-            print(done)
-            print(info)
+            n_victory += 1
             observation, info = env.reset()
 
     # Close the environment
     env.close()
+    print('number of victory', n_victory)
