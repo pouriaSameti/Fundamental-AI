@@ -54,14 +54,23 @@ class CliffWalking(CliffWalkingEnv):
         new_position = np.array(current) + np.array(delta)
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
+        # if self._cliff[tuple(new_position)]:
+        #     return [(1.0, self.start_state_index, -100, False)]
+
+        # terminal_state = (self.shape[0] - 1, self.shape[1] - 1)
+        # is_terminated = tuple(new_position) == terminal_state
+        # if is_terminated:
+        #     return [(1 / 3, new_state, 100, is_terminated)]
+        # return [(1 / 3, new_state, -1, is_terminated)]
+
         if self._cliff[tuple(new_position)]:
-            return [(1.0, self.start_state_index, -100, False)]
+            return [(1.0, self.start_state_index, (-7.5) + euclidean_distance(new_position[0], new_position[1]), False)]
 
         terminal_state = (self.shape[0] - 1, self.shape[1] - 1)
         is_terminated = tuple(new_position) == terminal_state
         if is_terminated:
-            return [(1 / 3, new_state, 150, is_terminated)]
-        return [(1 / 3, new_state, -1, is_terminated)]
+            return [(1 / 3, new_state, 0, is_terminated)]
+        return [(1 / 3, new_state, euclidean_distance(new_position[0], new_position[1]), is_terminated)]
 
     # DFS to check that it's a valid path.
     def is_valid(self):
@@ -238,6 +247,11 @@ def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: in
     return v_star, q_star
 
 
+def euclidean_distance(x, y):
+    termination_pos = (3, 11)
+    return (-1) * np.sqrt(np.power(x - termination_pos[0], 2) + np.power(y - termination_pos[1], 2))
+
+
 def policy_extraction(q_star):
     policy = {}  # key:state  value:direction
 
@@ -271,11 +285,10 @@ if __name__ == '__main__':
     v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor, max_iteration=max_iter_number)
     policy = policy_extraction(q_star)
     # print(v_star)
-    # print(q_star)
+    print(q_star)
     print(policy)
 
     for __ in range(max_iter_number):
-        pass
         # TODO: Implement the agent policy here
         # Note: .sample() is used to sample random action from the environment's action space
         # Choose an action (Replace this random action with your agent's policy)
@@ -288,6 +301,8 @@ if __name__ == '__main__':
         next_state, reward, done, truncated, info = env.step(action)
 
         if done or truncated:
+            print(done)
+            print(info)
             observation, info = env.reset()
 
     # Close the environment
