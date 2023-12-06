@@ -63,14 +63,23 @@ class CliffWalking(CliffWalkingEnv):
         #     return [(1 / 3, new_state, 100, is_terminated)]
         # return [(1 / 3, new_state, -1, is_terminated)]
 
+        # if self._cliff[tuple(new_position)]:
+        #     return [(1.0, self.start_state_index, (-7.5) + euclidean_distance(new_position[0], new_position[1]), False)]
+        #
+        # terminal_state = (self.shape[0] - 1, self.shape[1] - 1)
+        # is_terminated = tuple(new_position) == terminal_state
+        # if is_terminated:
+        #     return [(1 / 3, new_state, 0, is_terminated)]
+        # return [(1 / 3, new_state, euclidean_distance(new_position[0], new_position[1]), is_terminated)]
+
         if self._cliff[tuple(new_position)]:
-            return [(1.0, self.start_state_index, (-7.5) + euclidean_distance(new_position[0], new_position[1]), False)]
+            return [(1.0, self.start_state_index, (-7.5) + manhattan_distance(new_position[0], new_position[1]), False)]
 
         terminal_state = (self.shape[0] - 1, self.shape[1] - 1)
         is_terminated = tuple(new_position) == terminal_state
         if is_terminated:
             return [(1 / 3, new_state, 0, is_terminated)]
-        return [(1 / 3, new_state, euclidean_distance(new_position[0], new_position[1]), is_terminated)]
+        return [(1 / 3, new_state, manhattan_distance(new_position[0], new_position[1]), is_terminated)]
 
     # DFS to check that it's a valid path.
     def is_valid(self):
@@ -250,6 +259,11 @@ def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: in
 def euclidean_distance(x, y):
     termination_pos = (3, 11)
     return (-1) * np.sqrt(np.power(x - termination_pos[0], 2) + np.power(y - termination_pos[1], 2))
+
+
+def manhattan_distance(x, y):
+    termination_pos = (3, 11)
+    return (-1) * np.abs(np.abs(x - termination_pos[0]) + np.abs(y - termination_pos[1]))
 
 
 def policy_extraction(q_star):
