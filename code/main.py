@@ -213,12 +213,8 @@ def policy_initialization(policy: dict, states: list, actions: list):
         policy[s] = np.random.choice(actions)
 
 
-def v_star_initialization(v_star: list):
-    v_star[47] = 100
-    for x, y in env.cliff_positions:
-        position = x * 12 + y
-        v_star[position] = -100
-    return v_star
+def v_star_initialization(n_states: int):
+    return np.zeros(n_states)
 
 
 def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: int):
@@ -286,7 +282,7 @@ if __name__ == '__main__':
     max_iter_number = 1000
     q = env.P
     q_star = [[0 for a in range(env.nA)] for _ in range(env.nS)]
-    v_star = np.zeros(env.nS)
+    v_star = v_star_initialization(env.nS)
 
     actions = {0: "UP", 1: "RIGHT", 2: "DOWN", 3: "LEFT"}
     states = list(range(env.nS))
