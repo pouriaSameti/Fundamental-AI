@@ -217,6 +217,10 @@ def v_star_initialization(n_states: int):
     return np.zeros(n_states)
 
 
+def q_star_initialization(n_states: int, n_actions: int):
+    return [[0 for a in range(n_actions)] for _ in range(n_states)]
+
+
 def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: int):
     for _ in range(max_iteration):
         for state in q:
@@ -281,8 +285,8 @@ if __name__ == '__main__':
     # Define the maximum number of iterations
     max_iter_number = 1000
     q = env.P
-    q_star = [[0 for a in range(env.nA)] for _ in range(env.nS)]
     v_star = v_star_initialization(env.nS)
+    q_star = q_star_initialization(n_states=env.nS, n_actions=env.nA)
 
     actions = {0: "UP", 1: "RIGHT", 2: "DOWN", 3: "LEFT"}
     states = list(range(env.nS))
