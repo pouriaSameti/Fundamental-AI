@@ -281,8 +281,8 @@ def update_policy(state_statues: list, update_state_track: np.array, state: int,
     n_repetition = state_statues[state][action]
     if n_repetition >= max_repetition:
         update_report = f'Update Report for State {state}\nOLD => action: {action}'
-        rewards = q_star[state]
-        max_index = np.argsort(rewards)[::-1]
+        values = q_star[state]
+        max_index = np.argsort(values)[::-1]
         n_update = int(update_state_track[state] % 4)  # we select the index of new action with respect to update_state_track list
         policy[state] = max_index[(n_update+1) % 4]
         state_statues[state][action] = 0
@@ -292,6 +292,18 @@ def update_policy(state_statues: list, update_state_track: np.array, state: int,
         update_report += f'Number of Updating state {state} is {update_state_track[state]}\n'
         print(update_report)
 
+    else:
+        state_statues[state][action] = n_repetition + 1
+
+
+def update_policy_dumb(state_statues: list, state: int, action: int, policy: dict, max_repetition: int):  # this method update policy with respect to repetition of an action in the specific state
+    n_repetition = state_statues[state][action]
+    if n_repetition == max_repetition:
+        update_report = f'Update Report for State {state}\nOLD => action: {action}'
+        new_action = (action + 2) % 4
+        policy[state] = new_action
+        update_report += f'\nNEW => action:{policy[state]}\n'
+        print(update_report)
     else:
         state_statues[state][action] = n_repetition + 1
 
@@ -325,7 +337,7 @@ if __name__ == '__main__':
 
     # print(v_star)
     # print(q_star)
-    # print(policy)
+    print(policy)
 
     n_victory = 0
     for __ in range(max_iter_number):
@@ -338,8 +350,10 @@ if __name__ == '__main__':
 
         # Perform the action and receive feedback from the environment
         next_state, reward, done, truncated, info = env.step(action)
-        update_policy(state_statues=status_rep, update_state_track=status_number_updates, state=env.s,
-                      action=action, q_star=q_star, policy=policy, max_repetition=100)
+        # update_policy(state_statues=status_rep, update_state_track=status_number_updates, state=env.s,
+        #               action=action, q_star=q_star, policy=policy, max_repetition=100)
+        if n_victory == 0 and env.s != 36:
+            update_policy_dumb(state_statues=status_rep, state=env.s, action=action, policy=policy, max_repetition=77)
 
         if done or truncated:
             n_victory += 1
