@@ -276,6 +276,26 @@ def policy_extraction(q_star):
     return policy
 
 
+def update_policy(state_statues: list, update_state_track: np.array, state: int, action: int, q_star: dict,
+                  policy: dict, max_repetition: int):  # this method update policy with respect to repetition of an action in the specific state
+    n_repetition = state_statues[state][action]
+    if n_repetition >= max_repetition:
+        update_report = f'Update Report for State {state}\nOLD => action: {action}'
+        rewards = q_star[state]
+        max_index = np.argsort(rewards)[::-1]
+        n_update = int(update_state_track[state] % 4)  # we select the index of new action with respect to update_state_track list
+        policy[state] = max_index[(n_update+1) % 4]
+        state_statues[state][action] = 0
+        update_state_track[state] = update_state_track[state] + 1
+
+        update_report += f'\nNEW => action:{policy[state]}\n'
+        update_report += f'Number of Updating state {state} is {update_state_track[state]}\n'
+        print(update_report)
+
+    else:
+        state_statues[state][action] = n_repetition + 1
+
+
 if __name__ == '__main__':
 
     # Create an environment
@@ -292,11 +312,15 @@ if __name__ == '__main__':
     states = list(range(env.nS))
     policy = {}  # key:state  value:action
 
+    status_rep = [[0 for a in range(env.nA)] for _ in range(env.nS)]
+    status_number_updates = np.zeros(env.nS)
+
     discount_factor = 0.9
 
     policy_initialization(policy, states, [*actions.keys()])
 
-    v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor, max_iteration=max_iter_number)
+    v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor,
+                                     max_iteration=max_iter_number)
     policy = policy_extraction(q_star)
 
     # print(v_star)
@@ -314,6 +338,8 @@ if __name__ == '__main__':
 
         # Perform the action and receive feedback from the environment
         next_state, reward, done, truncated, info = env.step(action)
+        update_policy(state_statues=status_rep, update_state_track=status_number_updates, state=env.s,
+                      action=action, q_star=q_star, policy=policy, max_repetition=100)
 
         if done or truncated:
             n_victory += 1
