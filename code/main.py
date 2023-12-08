@@ -213,12 +213,7 @@ def policy_initialization(policy: dict, states: list, actions: list):
         policy[s] = np.random.choice(actions)
 
 
-def v_star_initialization(n_states: int):
-    return np.zeros(n_states)
 
-
-def q_star_initialization(n_states: int, n_actions: int):
-    return [[0 for a in range(n_actions)] for _ in range(n_states)]
 
 
 def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: int):
@@ -254,7 +249,6 @@ def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: in
             v_star[state] = max(q_star[state])
 
     return v_star, q_star
-
 
 def euclidean_distance(x, y):
     termination_pos = (3, 11)
@@ -352,8 +346,8 @@ if __name__ == '__main__':
         next_state, reward, done, truncated, info = env.step(action)
         # update_policy(state_statues=status_rep, update_state_track=status_number_updates, state=env.s,
         #               action=action, q_star=q_star, policy=policy, max_repetition=100)
-        if n_victory == 0 and env.s != 36:
-            update_policy_dumb(state_statues=status_rep, state=env.s, action=action, policy=policy, max_repetition=77)
+        # if n_victory == 0 and env.s != 36:
+        #     update_policy_dumb(state_statues=status_rep, state=env.s, action=action, policy=policy, max_repetition=77)
 
         if done or truncated:
             n_victory += 1
