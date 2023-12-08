@@ -55,6 +55,8 @@ class CliffWalking(CliffWalkingEnv):
         new_position = np.array(current) + np.array(delta)
         new_position = self._limit_coordinates(new_position).astype(int)
         new_state = np.ravel_multi_index(tuple(new_position), self.shape)
+
+        # this part sets the score based on -1
         # if self._cliff[tuple(new_position)]:
         #     return [(1.0, self.start_state_index, -100, False)]
 
@@ -64,6 +66,7 @@ class CliffWalking(CliffWalkingEnv):
         #     return [(1 / 3, new_state, 100, is_terminated)]
         # return [(1 / 3, new_state, -1, is_terminated)]
 
+        # this part sets the score based on Euclidean Distance
         # if self._cliff[tuple(new_position)]:
         #     return [(1.0, self.start_state_index, (-7.5) + euclidean_distance(new_position[0], new_position[1]), False)]
         #
@@ -73,6 +76,7 @@ class CliffWalking(CliffWalkingEnv):
         #     return [(1 / 3, new_state, 0, is_terminated)]
         # return [(1 / 3, new_state, euclidean_distance(new_position[0], new_position[1]), is_terminated)]
 
+        # this part sets the score based on Manhattan distance
         if self._cliff[tuple(new_position)]:
             return [(1.0, self.start_state_index, (-7.5) + manhattan_distance(new_position[0], new_position[1]), False)]
 
@@ -233,14 +237,15 @@ if __name__ == '__main__':
     actions = {0: "UP", 1: "RIGHT", 2: "DOWN", 3: "LEFT"}
     states = list(range(env.nS))
 
-    # these to lists are used for update)policy methods
+    # these to lists are used for update_policy methods
     status_rep = [[0 for a in range(env.nA)] for _ in range(env.nS)]
     status_number_updates = np.zeros(env.nS)
 
     mdp = MDP(n_states=env.nS, n_actions=env.nA)
     v_star, q_star = mdp.value_iteration(state_action_matrix=state_action_matrix, discount_factor=discount_factor,
                                          max_iteration=max_iter_number)
-    policy = MDP.policy_extraction(q_star) # key:state  value:action
+
+    policy = MDP.policy_extraction(q_star)  # key:state  value:action
 
     # print(v_star)
     # print(q_star)
@@ -260,6 +265,7 @@ if __name__ == '__main__':
 
         # update_policy(state_statues=status_rep, update_state_track=status_number_updates, state=env.s,
         #               action=action, q_star=q_star, policy=policy, max_repetition=100)
+
         # if n_victory == 0 and env.s != 36:
         #     update_policy_dumb(state_statues=status_rep, state=env.s, action=action, policy=policy, max_repetition=77)
 
