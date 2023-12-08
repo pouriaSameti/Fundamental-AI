@@ -4,6 +4,7 @@ import gymnasium as gym
 from gymnasium.envs.toy_text.cliffwalking import CliffWalkingEnv
 from gymnasium.error import DependencyNotInstalled
 from os import path
+from mdp import MDP
 
 # Do not change this class
 UP = 0
@@ -208,11 +209,6 @@ class CliffWalking(CliffWalkingEnv):
             )
 
 
-def policy_initialization(policy: dict, states: list, actions: list):
-    for s in states:
-        policy[s] = np.random.choice(actions)
-
-
 def euclidean_distance(x, y):
     termination_pos = (3, 11)
     return (-1) * np.sqrt(np.power(x - termination_pos[0], 2) + np.power(y - termination_pos[1], 2))
@@ -223,7 +219,6 @@ def manhattan_distance(x, y):
     return (-1) * np.abs(np.abs(x - termination_pos[0]) + np.abs(y - termination_pos[1]))
 
 
-
 if __name__ == '__main__':
 
     # Create an environment
@@ -232,28 +227,24 @@ if __name__ == '__main__':
 
     # Define the maximum number of iterations
     max_iter_number = 1000
-    q = env.P
-    v_star = v_star_initialization(env.nS)
-    q_star = q_star_initialization(n_states=env.nS, n_actions=env.nA)
+    discount_factor = 0.9
+    state_action_matrix = env.P
 
     actions = {0: "UP", 1: "RIGHT", 2: "DOWN", 3: "LEFT"}
     states = list(range(env.nS))
-    policy = {}  # key:state  value:action
 
+    # these to lists are used for update)policy methods
     status_rep = [[0 for a in range(env.nA)] for _ in range(env.nS)]
     status_number_updates = np.zeros(env.nS)
 
-    discount_factor = 0.9
-
-    policy_initialization(policy, states, [*actions.keys()])
-
-    v_star, q_star = value_iteration(q=q, v_star=v_star, q_star=q_star, discount_factor=discount_factor,
-                                     max_iteration=max_iter_number)
-    policy = policy_extraction(q_star)
+    mdp = MDP(n_states=env.nS, n_actions=env.nA)
+    v_star, q_star = mdp.value_iteration(state_action_matrix=state_action_matrix, discount_factor=discount_factor,
+                                         max_iteration=max_iter_number)
+    policy = MDP.policy_extraction(q_star) # key:state  value:action
 
     # print(v_star)
     # print(q_star)
-    print(policy)
+    # print(policy)
 
     n_victory = 0
     for __ in range(max_iter_number):
@@ -266,6 +257,7 @@ if __name__ == '__main__':
 
         # Perform the action and receive feedback from the environment
         next_state, reward, done, truncated, info = env.step(action)
+
         # update_policy(state_statues=status_rep, update_state_track=status_number_updates, state=env.s,
         #               action=action, q_star=q_star, policy=policy, max_repetition=100)
         # if n_victory == 0 and env.s != 36:
