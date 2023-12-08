@@ -105,6 +105,5 @@ class MDP:
 
         x_axis = np.array(iteration_list)
         y_axis = np.array(scores)
-
-        plt.plot(x_axis, y_axis, color='green')
+        sns.lineplot(x=x_axis, y=y_axis)
         plt.show()
