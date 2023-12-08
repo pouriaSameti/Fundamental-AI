@@ -216,40 +216,6 @@ def policy_initialization(policy: dict, states: list, actions: list):
 
 
 
-def value_iteration(q, v_star, q_star, discount_factor: float, max_iteration: int):
-    for _ in range(max_iteration):
-        for state in q:
-            for action in q[state]:
-                for probability, nextState, reward, isTerminalState in q[state][action]:
-                    if action == 0:
-                        probability1, nextState1, reward1, isTerminalState1 = q[state][action + 1][0]
-                        probability3, nextState3, reward3, isTerminalState3 = q[state][action + 3][0]
-                        q_star[state][action] = (probability * (reward + discount_factor * v_star[nextState])) + \
-                                                (probability1 * (reward1 + discount_factor * v_star[nextState1])) + \
-                                                (probability3 * (reward3 + discount_factor * v_star[nextState3]))
-                    elif action == 1:
-                        probability2, nextState2, reward2, isTerminalState2 = q[state][action + 1][0]
-                        probability0, nextState0, reward0, isTerminalState0 = q[state][action - 1][0]
-                        q_star[state][action] = (probability * (reward + discount_factor * v_star[nextState])) + \
-                                                (probability2 * (reward2 + discount_factor * v_star[nextState2])) + \
-                                                (probability0 * (reward0 + discount_factor * v_star[nextState0]))
-                    elif action == 2:
-                        probability1, nextState1, reward1, isTerminalState1 = q[state][action - 1][0]
-                        probability3, nextState3, reward3, isTerminalState3 = q[state][action + 1][0]
-                        q_star[state][action] = (probability * (reward + discount_factor * v_star[nextState])) + \
-                                                (probability1 * (reward1 + discount_factor * v_star[nextState1])) + \
-                                                (probability3 * (reward3 + discount_factor * v_star[nextState3]))
-                    else:
-                        probability2, nextState2, reward2, isTerminalState2 = q[state][action - 1][0]
-                        probability0, nextState0, reward0, isTerminalState0 = q[state][action - 3][0]
-                        q_star[state][action] = (probability * (reward + discount_factor * v_star[nextState])) + \
-                                                (probability2 * (reward2 + discount_factor * v_star[nextState2])) + \
-                                                (probability0 * (reward0 + discount_factor * v_star[nextState0]))
-
-            v_star[state] = max(q_star[state])
-
-    return v_star, q_star
-
 def euclidean_distance(x, y):
     termination_pos = (3, 11)
     return (-1) * np.sqrt(np.power(x - termination_pos[0], 2) + np.power(y - termination_pos[1], 2))
