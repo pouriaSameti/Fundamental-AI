@@ -73,6 +73,19 @@ class MDP:
             state_statues[state][action] = n_repetition + 1
 
     @classmethod
+    def update_policy_dumb(cls, state_statues: list, state: int, action: int, policy: dict,
+                           max_repetition: int):  # this method update policy with respect to repetition of an action in the specific state
+        n_repetition = state_statues[state][action]
+        if n_repetition == max_repetition:
+            update_report = f'Update Report for State {state}\nOLD => action: {action}'
+            new_action = (action + 2) % 4
+            policy[state] = new_action
+            update_report += f'\nNEW => action:{policy[state]}\n'
+            print(update_report)
+        else:
+            state_statues[state][action] = n_repetition + 1
+
+    @classmethod
     def policy_extraction(cls, q_star: list):
         policy = {}  # key:state  value:direction
 
