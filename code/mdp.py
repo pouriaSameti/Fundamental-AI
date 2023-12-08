@@ -50,3 +50,12 @@ class MDP:
 
         return self.v_star, self.q_star
 
+    @classmethod
+    def policy_extraction(cls, q_star: list):
+        policy = {}  # key:state  value:direction
+
+        for index in range(len(q_star)):
+            state = q_star[index]
+            max_index = np.argmax(state)
+            policy[index] = max_index
+        return policy

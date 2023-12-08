@@ -226,15 +226,6 @@ def manhattan_distance(x, y):
     return (-1) * np.abs(np.abs(x - termination_pos[0]) + np.abs(y - termination_pos[1]))
 
 
-def policy_extraction(q_star):
-    policy = {}  # key:state  value:direction
-
-    for index in range(len(q_star)):
-        state = q_star[index]
-        max_index = np.argmax(state)
-        policy[index] = max_index
-    return policy
-
 
 def update_policy(state_statues: list, update_state_track: np.array, state: int, action: int, q_star: dict,
                   policy: dict, max_repetition: int):  # this method update policy with respect to repetition of an action in the specific state
