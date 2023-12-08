@@ -1,4 +1,6 @@
+import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
 
 class MDP:
@@ -17,6 +19,7 @@ class MDP:
         return np.zeros(self.n_states)
 
     def value_iteration(self, state_action_matrix, discount_factor: float, max_iteration: int):
+        score_list = []
         for _ in range(max_iteration):
             for state in state_action_matrix:
                 for action in state_action_matrix[state]:
@@ -47,8 +50,9 @@ class MDP:
                                                     (probability0 * (reward0 + discount_factor * self.v_star[nextState0]))
 
                 self.v_star[state] = max(self.q_star[state])
+            score_list.append(np.abs(np.sum(self.v_star)))
 
-        return self.v_star, self.q_star
+        return self.v_star, self.q_star, score_list
 
     @classmethod
     def update_policy(cls, state_statues: list, update_state_track: np.array, state: int, action: int, q_star: dict,
@@ -94,3 +98,13 @@ class MDP:
             max_index = np.argmax(state)
             policy[index] = max_index
         return policy
+
+    @classmethod
+    def show_score_per_iteration(cls, n_iterations, scores):
+        iteration_list = list(range(n_iterations))
+
+        x_axis = np.array(iteration_list)
+        y_axis = np.array(scores)
+
+        plt.plot(x_axis, y_axis, color='green')
+        plt.show()
