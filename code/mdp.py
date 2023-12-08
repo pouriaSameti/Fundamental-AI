@@ -51,6 +51,28 @@ class MDP:
         return self.v_star, self.q_star
 
     @classmethod
+    def update_policy(cls, state_statues: list, update_state_track: np.array, state: int, action: int, q_star: dict,
+                      policy: dict,
+                      max_repetition: int):  # this method update policy with respect to repetition of an action in the specific state
+        n_repetition = state_statues[state][action]
+        if n_repetition >= max_repetition:
+            update_report = f'Update Report for State {state}\nOLD => action: {action}'
+            values = q_star[state]
+            max_index = np.argsort(values)[::-1]
+            n_update = int(update_state_track[
+                               state] % 4)  # we select the index of new action with respect to update_state_track list
+            policy[state] = max_index[(n_update + 1) % 4]
+            state_statues[state][action] = 0
+            update_state_track[state] = update_state_track[state] + 1
+
+            update_report += f'\nNEW => action:{policy[state]}\n'
+            update_report += f'Number of Updating state {state} is {update_state_track[state]}\n'
+            print(update_report)
+
+        else:
+            state_statues[state][action] = n_repetition + 1
+
+    @classmethod
     def policy_extraction(cls, q_star: list):
         policy = {}  # key:state  value:direction
 

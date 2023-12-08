@@ -213,9 +213,6 @@ def policy_initialization(policy: dict, states: list, actions: list):
         policy[s] = np.random.choice(actions)
 
 
-
-
-
 def euclidean_distance(x, y):
     termination_pos = (3, 11)
     return (-1) * np.sqrt(np.power(x - termination_pos[0], 2) + np.power(y - termination_pos[1], 2))
@@ -224,7 +221,6 @@ def euclidean_distance(x, y):
 def manhattan_distance(x, y):
     termination_pos = (3, 11)
     return (-1) * np.abs(np.abs(x - termination_pos[0]) + np.abs(y - termination_pos[1]))
-
 
 
 def update_policy(state_statues: list, update_state_track: np.array, state: int, action: int, q_star: dict,
