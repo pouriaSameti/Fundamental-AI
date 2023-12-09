@@ -76,6 +76,7 @@ class MDP:
         x_axis = np.array(iteration_list)
         y_axis = np.array(scores)
         sns.lineplot(x=x_axis, y=y_axis)
+        plt.suptitle(f'Plot of sum of the v_star values per iteration\n Iterations: {n_iterations}')
         plt.show()
 
     @classmethod
