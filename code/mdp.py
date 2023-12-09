@@ -89,5 +89,6 @@ class MDP:
             game_state_score.append(row_score)
 
         sns.heatmap(game_state_score, annot=True)
+        plt.suptitle('Heatmap Based on v_star')
         plt.show()
 

@@ -248,7 +248,7 @@ if __name__ == '__main__':
 
     policy = MDP.policy_extraction(q_star)  # key:state  value:action
     MDP.show_score_per_iteration(n_iterations=iteration, scores=score_list_per_iteration)
-    MDP.show_heat_map(v_star=v_star, n_rows=4, n_columns=12)
+    MDP.show_heatmap(v_star=v_star, n_rows=4, n_columns=12)
 
     # print(v_star)
     # print(q_star)
