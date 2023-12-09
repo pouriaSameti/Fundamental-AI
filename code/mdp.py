@@ -52,7 +52,6 @@ class MDP:
 
                 self.v_star[state] = max(self.q_star[state])
                 if np.sum(np.abs(self.v_star)) - np.sum(np.abs(previous_v_star)) == 0:
-                    print('convergence at iteration', iteration)
                     return self.v_star, self.q_star, score_list, iteration
 
             score_list.append(np.abs(np.sum(self.v_star)))
