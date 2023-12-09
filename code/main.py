@@ -242,11 +242,11 @@ if __name__ == '__main__':
     status_number_updates = np.zeros(env.nS)
 
     mdp = MDP(n_states=env.nS, n_actions=env.nA)
-    v_star, q_star, score_list_per_iteration = mdp.value_iteration(state_action_matrix=state_action_matrix, discount_factor=discount_factor,
+    v_star, q_star, score_list_per_iteration, iteration = mdp.value_iteration(state_action_matrix=state_action_matrix, discount_factor=discount_factor,
                                                max_iteration=max_iter_number)
 
     policy = MDP.policy_extraction(q_star)  # key:state  value:action
-    MDP.show_score_per_iteration(n_iterations=max_iter_number, scores=score_list_per_iteration)
+    MDP.show_score_per_iteration(n_iterations=iteration, scores=score_list_per_iteration)
 
     # print(v_star)
     # print(q_star)

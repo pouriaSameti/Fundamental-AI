@@ -20,7 +20,8 @@ class MDP:
 
     def value_iteration(self, state_action_matrix, discount_factor: float, max_iteration: int):
         score_list = []
-        for _ in range(max_iteration):
+        for iteration in range(max_iteration):
+            previous_v_star = np.copy(self.v_star)
             for state in state_action_matrix:
                 for action in state_action_matrix[state]:
                     for probability, nextState, reward, isTerminalState in state_action_matrix[state][action]:
@@ -50,9 +51,14 @@ class MDP:
                                                     (probability0 * (reward0 + discount_factor * self.v_star[nextState0]))
 
                 self.v_star[state] = max(self.q_star[state])
+                if np.sum(np.abs(self.v_star)) - np.sum(np.abs(previous_v_star)) == 0:
+                    print('convergence')
+                    print('iteration', iteration)
+                    return self.v_star, self.q_star, score_list, iteration
+
             score_list.append(np.abs(np.sum(self.v_star)))
 
-        return self.v_star, self.q_star, score_list
+        return self.v_star, self.q_star, score_list, max_iteration
 
     @classmethod
     def policy_extraction(cls, q_star: list):
