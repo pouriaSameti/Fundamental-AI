@@ -52,8 +52,7 @@ class MDP:
 
                 self.v_star[state] = max(self.q_star[state])
                 if np.sum(np.abs(self.v_star)) - np.sum(np.abs(previous_v_star)) == 0:
-                    print('convergence')
-                    print('iteration', iteration)
+                    print('convergence at iteration', iteration)
                     return self.v_star, self.q_star, score_list, iteration
 
             score_list.append(np.abs(np.sum(self.v_star)))
@@ -78,3 +77,17 @@ class MDP:
         y_axis = np.array(scores)
         sns.lineplot(x=x_axis, y=y_axis)
         plt.show()
+
+    @classmethod
+    def show_heatmap(cls, v_star, n_rows: int, n_columns: int):
+        game_state_score = []
+        for i in range(n_rows):
+            row_score = []
+            for j in range(n_columns):
+                position = (i * n_columns) + j
+                row_score.append(v_star[position])
+            game_state_score.append(row_score)
+
+        sns.heatmap(game_state_score, annot=True)
+        plt.show()
+

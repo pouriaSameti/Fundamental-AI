@@ -242,11 +242,13 @@ if __name__ == '__main__':
     status_number_updates = np.zeros(env.nS)
 
     mdp = MDP(n_states=env.nS, n_actions=env.nA)
-    v_star, q_star, score_list_per_iteration, iteration = mdp.value_iteration(state_action_matrix=state_action_matrix, discount_factor=discount_factor,
-                                               max_iteration=max_iter_number)
+    v_star, q_star, score_list_per_iteration, iteration = mdp.value_iteration(state_action_matrix=state_action_matrix,
+                                                                              discount_factor=discount_factor,
+                                                                              max_iteration=max_iter_number)
 
     policy = MDP.policy_extraction(q_star)  # key:state  value:action
     MDP.show_score_per_iteration(n_iterations=iteration, scores=score_list_per_iteration)
+    MDP.show_heat_map(v_star=v_star, n_rows=4, n_columns=12)
 
     # print(v_star)
     # print(q_star)
@@ -263,12 +265,6 @@ if __name__ == '__main__':
 
         # Perform the action and receive feedback from the environment
         next_state, reward, done, truncated, info = env.step(action)
-
-        # update_policy(state_statues=status_rep, update_state_track=status_number_updates, state=env.s,
-        #               action=action, q_star=q_star, policy=policy, max_repetition=100)
-
-        # if n_victory == 0 and env.s != 36:
-        #     update_policy_dumb(state_statues=status_rep, state=env.s, action=action, policy=policy, max_repetition=77)
 
         if done or truncated:
             n_victory += 1
