@@ -18,6 +18,16 @@ def mapping(observation: tuple):
     return int(observation[0] * 10 + observation[1])
 
 
+def reward_euclidean():
+    rewards = list()
+    for x in range(10):
+        for y in range(10):
+            rewards.append((np.sqrt(np.power((x - 9), 2) + np.power((y - 9), 2))) * -0.1)
+
+    rewards[99] = 100
+    return rewards
+
+
 if __name__ == '__main__':
 
     # Create an environment
@@ -28,25 +38,41 @@ if __name__ == '__main__':
     nA = 4
     NUM_EPISODES = 1000
     epsilon = 0.4
+    alpha = 0.2
+    gamma = 0.95
     Q = np.zeros([nS, nA])
     state = observation
+    # golabi = np.zeros([nS, nA])
+    rewards = reward_euclidean()
+    v_star = list(range(nS))
+    convergence = []
 
     for episode in range(NUM_EPISODES):
+        observation = env.reset()
         for t in itertools.count():
             action = random_epsilon_greedy_policy(Q, mapping(state), epsilon)
-            # Note: .sample() is used to sample random action from the environment's action space
-
+            # print(action)
             # Perform the action and receive feedback from the environment
             next_state, reward, done, truncated = env.step(action)
-            # print(next_state, reward, done, truncated)
-
-            epsilon -= 0.01
             if done or truncated:
-                observation = env.reset()
-                state = observation
+                for s in range(nS):
+                    v_star[s] = np.max(Q[s])
+                convergence.append(np.sum(v_star))
+                print(np.sum(v_star))
+                print(v_star)
+                break
+            state = next_state
+            Q[mapping(state)][action] += alpha * (rewards[mapping(state)] + gamma * np.max(Q[mapping(next_state)]) - Q[mapping(state)][action])
+            epsilon -= 0.01
 
-        env.render()
-        time.sleep(0.1)
+            # if mapping(next_state) == mapping(state):
+            #     golabi[mapping(state)][action] = 1
+            #
+            # if golabi[mapping(state)][0] + golabi[mapping(state)][1] + golabi[mapping(state)][2] + golabi[mapping(state)][3] == 3:
+            #     rewards[mapping(state)] -= 0.01
 
+            env.render()
+
+        print(Q)
     # Close the environment
     env.close()
