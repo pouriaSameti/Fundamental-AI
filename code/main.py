@@ -3,6 +3,8 @@ import gym_maze
 import time
 import itertools
 import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 
 def random_epsilon_greedy_policy(Q: np.ndarray, state: int, epsilon: float):
@@ -28,6 +30,13 @@ def reward_euclidean():
     return rewards
 
 
+def show_convergence_plot(converge_list: list):
+    x = list(range(len(converge_list)))
+    y = converge_list
+    sns.lineplot(x=x, y=y)
+    plt.show()
+
+
 if __name__ == '__main__':
 
     # Create an environment
@@ -36,9 +45,9 @@ if __name__ == '__main__':
 
     nS = 100
     nA = 4
-    NUM_EPISODES = 1000
+    NUM_EPISODES = 100
     epsilon = 0.4
-    alpha = 0.2
+    alpha = 0.9
     gamma = 0.95
     Q = np.zeros([nS, nA])
     state = observation
@@ -54,6 +63,7 @@ if __name__ == '__main__':
             # print(action)
             # Perform the action and receive feedback from the environment
             next_state, reward, done, truncated = env.step(action)
+
             if done or truncated:
                 for s in range(nS):
                     v_star[s] = np.max(Q[s])
@@ -73,6 +83,6 @@ if __name__ == '__main__':
 
             env.render()
 
-        print(Q)
     # Close the environment
     env.close()
+    show_convergence_plot(convergence)
