@@ -46,6 +46,7 @@ if __name__ == '__main__':
     nS = 100
     nA = 4
     NUM_EPISODES = 100
+    NUM_ITERATION = 1000
     epsilon = 0.4
     alpha = 0.9
     gamma = 0.95
@@ -64,13 +65,15 @@ if __name__ == '__main__':
             # Perform the action and receive feedback from the environment
             next_state, reward, done, truncated = env.step(action)
 
-            if done or truncated:
+            if done or truncated or t == NUM_ITERATION:
+                t = 0
                 for s in range(nS):
                     v_star[s] = np.max(Q[s])
                 convergence.append(np.sum(v_star))
                 print(np.sum(v_star))
                 print(v_star)
                 break
+
             state = next_state
             Q[mapping(state)][action] += alpha * (rewards[mapping(state)] + gamma * np.max(Q[mapping(next_state)]) - Q[mapping(state)][action])
             epsilon -= 0.01
