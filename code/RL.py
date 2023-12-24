@@ -60,7 +60,7 @@ class DeepQLearning:
     @classmethod
     def __model_initialization(cls, neuron_per_layer: int, n_states: int, n_actions: int):
         model = keras.Sequential([
-            keras.layers.Dense(neuron_per_layer, activation='elu', input_shape=n_states),
+            keras.layers.Dense(neuron_per_layer, activation='elu', input_shape=[n_states]),
             keras.layers.Dense(neuron_per_layer, activation='elu'),
             keras.layers.Dense(neuron_per_layer, activation='elu'),
             keras.layers.Dense(n_actions)
