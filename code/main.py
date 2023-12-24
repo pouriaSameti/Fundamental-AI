@@ -36,8 +36,8 @@ if __name__ == '__main__':
 
     nS = 100
     nA = 4
-    NUM_EPISODES = 100
-    NUM_ITERATION = 2000
+    NUM_EPISODES = 1000
+    NUM_ITERATION = 500
     epsilon = 0.4
     alpha = 0.1
     gamma = 0.95
@@ -52,16 +52,17 @@ if __name__ == '__main__':
     for episode in range(NUM_EPISODES):
         observation = env.reset()
 
+        v = QLearning.calculate_v(Q=Q)
+        convergence.append(np.abs(np.sum(v)))
+
         for t in range(NUM_ITERATION):
-            # action = QLearning.approximation_utility_policy(Q, mapping(state))
-            action = QLearning.epsilon_greedy_policy(Q, state=mapping(state), n_actions=nA, epsilon=epsilon)
-            epsilon = QLearning.decay_exponential(epsilon0=epsilon, iteration=episode, s=40)
+            action = QLearning.approximation_utility_policy(Q, mapping(state))
+            # action = QLearning.epsilon_greedy_policy(Q, state=mapping(state), n_actions=nA, epsilon=epsilon)
+            # epsilon = QLearning.decay_exponential(epsilon0=epsilon, iteration=episode, s=40)
 
             next_state, reward, done, truncated = env.step(action)
             if done or truncated:
                 win_num += 1
-                v = QLearning.calculate_v(Q=Q)
-                convergence.append(np.abs(np.sum(v)))
                 state = env.reset()
                 print(win_num)
                 break
