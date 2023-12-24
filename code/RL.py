@@ -70,10 +70,15 @@ class DeepQLearning:
 
 
 class QLearning:
+
     @staticmethod
-    def qlearning_equation(Q: np.ndarray, current_state: int, action: int, next_state: int, reward: int,
+    def qlearning_equation(Q: np.ndarray, current_state: int, action: int, next_state: int, reward: float,
                            alpha: float, gamma: float):
         return alpha * (reward + gamma * np.max(Q[next_state]) - Q[current_state][action])
+
+    @staticmethod
+    def calculate_v(Q: np.ndarray):
+        return [np.max(Q[state]) for state in range(len(Q))]
 
     @staticmethod
     def epsilon_greedy_policy(Q: np.ndarray, state: int, n_actions: int, epsilon: float):
