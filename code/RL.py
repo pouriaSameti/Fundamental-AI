@@ -24,6 +24,8 @@ class DeepQLearning:
         return next_state, reward, done, truncated
 
     def epsilon_greedy_policy(self, state, epsilon=0):
+        print(state)
+        # print(np.newaxis)
         if np.random.rand() < epsilon:
             return np.random.randint(self.nA)
         q_values = self.model.predict(state[np.newaxis])
@@ -52,7 +54,6 @@ class DeepQLearning:
     def sampling_from_memory(self):
         random_indices = np.random.randint(len(self.memory), size=self.batch_size)
         batch = [self.memory[index] for index in random_indices]
-
         states, actions, rewards, next_states, dones = [np.array([observation[field_index] for observation in batch])
                                                         for field_index in range(4)]
         return states, actions, rewards, next_states, dones
@@ -66,3 +67,7 @@ class DeepQLearning:
             keras.layers.Dense(n_actions)
         ])
         return model
+
+
+class QLearning:
+    pass
