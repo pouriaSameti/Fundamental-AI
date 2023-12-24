@@ -6,11 +6,11 @@ from collections import deque
 
 class DeepQLearning:
     def __init__(self, discount_factor: float, n_states: int, n_actions: int, batch_size: int, memory_length: int,
-                 learning_rate: float, gamma: float):
+                 learning_rate: float):
         self.batch_size = batch_size
         self.memory = deque(maxlen=memory_length)
         self.discount_factor = discount_factor
-        self.gamma = gamma
+        self.gamma = discount_factor
 
         self.model = DeepQLearning.__model_initialization(learning_rate=learning_rate)
 
@@ -21,7 +21,10 @@ class DeepQLearning:
         action = self.epsilon_greedy_policy(state, epsilon)
         next_state, reward, done, truncated = env.step(action)
 
-        self.memory.append((state, action, reward, next_state, done))
+        map_state = self.__mapping(state)
+        map_next_state = self.__mapping(next_state)
+
+        self.sampling(current_state=map_state, action=action, reward=reward, next_state=map_next_state)
         return next_state, reward, done, truncated
 
     def epsilon_greedy_policy(self, state, epsilon=0):
@@ -57,6 +60,10 @@ class DeepQLearning:
 
         model.compile(loss="mse", optimizer=keras.optimizers.Adam(lr=learning_rate))
         return model
+
+    @classmethod
+    def __mapping(cls, observation: tuple):
+        return int(observation[0] * 10 + observation[1])
 
 
 class QLearning:
