@@ -71,7 +71,12 @@ class DeepQLearning:
 
 class QLearning:
 
+    @staticmethod
     def epsilon_greedy_policy(Q: np.ndarray, state: int, n_actions: int, epsilon: float):
         if np.random.rand() < epsilon:
             return np.random.randint(n_actions)
+        return np.argmax(Q[state])
+
+    @staticmethod
+    def approximation_utility_policy(Q: np.ndarray, state: int, n_actions: int):
         return np.argmax(Q[state])
