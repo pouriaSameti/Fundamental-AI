@@ -45,7 +45,7 @@ if __name__ == '__main__':
 
     nS = 100
     nA = 4
-    NUM_EPISODES = 100
+    NUM_EPISODES = 10000
     NUM_ITERATION = 1000
     epsilon = 0.4
     alpha = 0.9
@@ -69,22 +69,22 @@ if __name__ == '__main__':
                 t = 0
                 for s in range(nS):
                     v_star[s] = np.max(Q[s])
-                convergence.append(np.sum(v_star))
+                convergence.append(np.abs(np.sum(v_star)))
                 print(np.sum(v_star))
-                print(v_star)
                 break
 
             state = next_state
             Q[mapping(state)][action] += alpha * (rewards[mapping(state)] + gamma * np.max(Q[mapping(next_state)]) - Q[mapping(state)][action])
             epsilon -= 0.01
-
+            env.render()
+        #
+        # if convergence. - convergence[-2] == 0:
+        #     break
             # if mapping(next_state) == mapping(state):
             #     golabi[mapping(state)][action] = 1
             #
             # if golabi[mapping(state)][0] + golabi[mapping(state)][1] + golabi[mapping(state)][2] + golabi[mapping(state)][3] == 3:
             #     rewards[mapping(state)] -= 0.01
-
-            env.render()
 
     # Close the environment
     env.close()
