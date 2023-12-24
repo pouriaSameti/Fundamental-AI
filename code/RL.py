@@ -6,13 +6,12 @@ from collections import deque
 
 class DeepQLearning:
     def __init__(self, discount_factor: float, n_states: int, n_actions: int, batch_size: int, memory_length: int,
-                 neuron_per_layer: int, learning_rate: float):
+                 learning_rate: float):
         self.batch_size = batch_size
         self.memory = deque(maxlen=memory_length)
         self.discount_factor = discount_factor
-        self.model = DeepQLearning.__model_initialization(neuron_per_layer=neuron_per_layer, n_states=n_states,
-                                                          n_actions=n_actions)
-
+        self.model = DeepQLearning.__model_initialization(n_states=n_states, n_actions=n_actions,
+                                                          learning_rate=learning_rate)
         self.nS = n_states
         self.nA = n_actions
 
@@ -51,12 +50,9 @@ class DeepQLearning:
         gradients = tape.gradient(error, self.model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
 
-    def sampling_from_memory(self):
-        random_indices = np.random.randint(len(self.memory), size=self.batch_size)
-        batch = [self.memory[index] for index in random_indices]
-        states, actions, rewards, next_states, dones = [np.array([observation[field_index] for observation in batch])
-                                                        for field_index in range(4)]
-        return states, actions, rewards, next_states, dones
+    def sampling(self,current_state, action, reward, next_state, done):
+        self.memory.append({"current_state": current_state, "action": action, "reward": reward,
+                            "next_state": next_state, "done": done})
 
     @classmethod
     def __model_initialization(cls, n_states: int, n_actions: int, learning_rate: float):
