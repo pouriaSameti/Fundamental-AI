@@ -10,7 +10,6 @@ class DeepQLearning:
         self.batch_size = batch_size
         self.memory = list()
         self.discount_factor = discount_factor
-        self.gamma = discount_factor
         self.learning_rate = learning_rate
         self.nS = n_states
         self.nA = n_actions
