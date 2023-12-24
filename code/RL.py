@@ -16,6 +16,12 @@ class DeepQLearning:
         self.nS = n_states
         self.nA = n_actions
 
+    def epsilon_greedy_policy(self, state, epsilon=0):
+        if np.random.rand() < epsilon:
+            return np.random.randint(self.nA)
+        q_values = self.model.predict(state[np.newaxis])
+        return np.argmax(q_values[0])
+
     def train_network(self):
         observations = self.sampling_from_memory()
         loss_function = keras.losses.mean_squared_error
