@@ -16,6 +16,13 @@ class DeepQLearning:
         self.nS = n_states
         self.nA = n_actions
 
+    def play(self, env, state, epsilon):
+        action = self.epsilon_greedy_policy(state, epsilon)
+        next_state, reward, done, truncated = env.step(action)
+
+        self.memory.append((state, action, reward, next_state, done))
+        return next_state, reward, done, truncated
+
     def epsilon_greedy_policy(self, state, epsilon=0):
         if np.random.rand() < epsilon:
             return np.random.randint(self.nA)
