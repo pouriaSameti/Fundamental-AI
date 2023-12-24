@@ -87,3 +87,7 @@ class QLearning:
     @staticmethod
     def approximation_utility_policy(Q: np.ndarray, state: int):
         return np.argmax(Q[state])
+
+    @staticmethod
+    def decay_exponential(epsilon0: float, iteration: int, s: int):
+        return epsilon0 * 0.1 ** (iteration/s)
