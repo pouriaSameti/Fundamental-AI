@@ -31,7 +31,7 @@ class DeepQLearning:
         return np.argmax(q_values[0])
 
     def train_network(self):
-        observations = self.sampling_from_memory()
+        observations = self.sampling()
         loss_function = keras.losses.mean_squared_error
         optimizer = keras.optimizers.Adam(lr=1e-3)
 
@@ -50,19 +50,18 @@ class DeepQLearning:
         gradients = tape.gradient(error, self.model.trainable_variables)
         optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
 
-    def sampling(self,current_state, action, reward, next_state, done):
+    def sampling(self, current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
                             "next_state": next_state, "done": done})
 
-    @classmethod
-    def __model_initialization(cls, n_states: int, n_actions: int, learning_rate: float):
+    def __model_initialization(self, learning_rate: float):
         model = keras.models.Sequential([
-            keras.layers.Dense(units=30, input_dim=n_states, activation='elu'),
+            keras.layers.Dense(units=30, input_dim=self.nS, activation='elu'),
             keras.layers.Dense(units=30, activation='elu'),
-            keras.layers.Dense(units=n_actions, activation='linear')
+            keras.layers.Dense(units=self.nA, activation='linear')
         ])
 
-        model.compile(loss="mse", optimizer = keras.optimizers.Adam(lr=learning_rate))
+        model.compile(loss="mse", optimizer=keras.optimizers.Adam(lr=learning_rate))
         return model
 
 
