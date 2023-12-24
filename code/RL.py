@@ -8,14 +8,13 @@ class DeepQLearning:
     def __init__(self, discount_factor: float, n_states: int, n_actions: int, batch_size: int, memory_length: int,
                  learning_rate: float):
         self.batch_size = batch_size
-        self.memory = deque(maxlen=memory_length)
+        self.memory = list()
         self.discount_factor = discount_factor
         self.gamma = discount_factor
-
-        self.model = DeepQLearning.__model_initialization(learning_rate=learning_rate)
-
+        self.learning_rate = learning_rate
         self.nS = n_states
         self.nA = n_actions
+        self.model = DeepQLearning.__model_initialization(self, learning_rate=learning_rate)
 
     def play(self, env, state, epsilon):
         action = self.epsilon_greedy_policy(state, epsilon)
@@ -24,13 +23,15 @@ class DeepQLearning:
         map_state = self.__mapping(state)
         map_next_state = self.__mapping(next_state)
 
-        self.sampling(current_state=map_state, action=action, reward=reward, next_state=map_next_state)
+        self.sampling(current_state=map_state, action=action, reward=reward, next_state=map_next_state, done=done)
         return next_state, reward, done, truncated
 
     def epsilon_greedy_policy(self, state, epsilon=0):
         if np.random.uniform(0, 1) < epsilon:
             return np.random.choice(range(self.nA))
-        q_values = self.model.predict(state)[0]
+
+        current_state = self.__mapping(state)
+        q_values = self.model.predict([current_state])[0]
         return np.argmax(q_values)
 
     def train_network(self):
@@ -38,14 +39,15 @@ class DeepQLearning:
         batch_sample = self.memory[:self.batch_size]
 
         for experience in batch_sample:
-            q_current_predicted = self.model.predict(experience["current_state"])
+            q_current_predicted = self.model.predict([experience["current_state"]])
             q_target = experience["reward"]
 
             if not experience["done"]:
-                q_target = q_target + self.gamma * np.max(self.model.predict(experience["next_state"])[0])
+                q_target = q_target + self.gamma * np.max(self.model.predict([experience["next_state"]])[0])
 
             q_current_predicted[0][experience["action"]] = q_target
-            self.model.fit(experience["current_state"], q_current_predicted, verbose=0)
+            predicted_action = max(range(len(q_current_predicted[0])), key=lambda i: q_current_predicted[0][i])
+            self.model.fit(np.array([experience["current_state"]]), np.array([predicted_action]), verbose=0)
 
     def sampling(self, current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
@@ -53,8 +55,7 @@ class DeepQLearning:
 
     def __model_initialization(self, learning_rate: float):
         model = keras.models.Sequential([
-            keras.layers.Dense(units=30, input_dim=self.nS, activation='elu'),
-            keras.layers.Dense(units=30, activation='elu'),
+            keras.layers.Dense(units=30, input_dim=1, activation='elu'),
             keras.layers.Dense(units=self.nA, activation='linear')
         ])
 
