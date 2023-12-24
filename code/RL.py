@@ -7,19 +7,41 @@ from collections import deque
 class DeepQLearning:
     def __init__(self, discount_factor: float, n_states: int, n_actions: int, batch_size: int, memory_length: int,
                  neuron_per_layer: int):
-
         self.batch_size = batch_size
         self.memory = deque(maxlen=memory_length)
         self.discount_factor = discount_factor
         self.model = DeepQLearning.__model_initialization(neuron_per_layer=neuron_per_layer, n_states=n_states,
                                                           n_actions=n_actions)
 
+        self.nS = n_states
+        self.nA = n_actions
+
+    def train_network(self):
+        observations = self.sampling_from_memory()
+        loss_function = keras.losses.mean_squared_error
+        optimizer = keras.optimizers.Adam(lr=1e-3)
+
+        states, actions, rewards, next_states, dones = observations
+
+        next_q_values = self.model.predict(next_states)
+        max_next_q = np.max(next_q_values)
+        target_q_values = (rewards + (1 - dones) * self.discount_factor * max_next_q)
+
+        mask = tf.one_hot(actions, self.nA)
+        with tf.GradientTape() as tape:
+            all_q_values = self.model(states)
+            q_values = tf.reduce_sum(all_q_values * mask, axis=1, keepdims=True)
+            error = tf.reduce_mean(loss_function(target_q_values, q_values))
+
+        gradients = tape.gradient(error, self.model.trainable_variables)
+        optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
+
     def sampling_from_memory(self):
         random_indices = np.random.randint(len(self.memory), size=self.batch_size)
         batch = [self.memory[index] for index in random_indices]
 
         states, actions, rewards, next_states, dones = [np.array([observation[field_index] for observation in batch])
-                                          for field_index in range(4)]
+                                                        for field_index in range(4)]
         return states, actions, rewards, next_states, dones
 
     @classmethod
