@@ -6,7 +6,7 @@ from collections import deque
 
 class DeepQLearning:
     def __init__(self, discount_factor: float, n_states: int, n_actions: int, batch_size: int, memory_length: int,
-                 neuron_per_layer: int):
+                 neuron_per_layer: int, learning_rate: float):
         self.batch_size = batch_size
         self.memory = deque(maxlen=memory_length)
         self.discount_factor = discount_factor
@@ -59,13 +59,14 @@ class DeepQLearning:
         return states, actions, rewards, next_states, dones
 
     @classmethod
-    def __model_initialization(cls, neuron_per_layer: int, n_states: int, n_actions: int):
-        model = keras.Sequential([
-            keras.layers.Dense(neuron_per_layer, activation='elu', input_shape=[n_states]),
-            keras.layers.Dense(neuron_per_layer, activation='elu'),
-            keras.layers.Dense(neuron_per_layer, activation='elu'),
-            keras.layers.Dense(n_actions)
+    def __model_initialization(cls, n_states: int, n_actions: int, learning_rate: float):
+        model = keras.models.Sequential([
+            keras.layers.Dense(units=30, input_dim=n_states, activation='elu'),
+            keras.layers.Dense(units=30, activation='elu'),
+            keras.layers.Dense(units=n_actions, activation='linear')
         ])
+
+        model.compile(loss="mse", optimizer = keras.optimizers.Adam(lr=learning_rate))
         return model
 
 
@@ -87,5 +88,5 @@ class QLearning:
         return np.argmax(Q[state])
 
     @staticmethod
-    def approximation_utility_policy(Q: np.ndarray, state: int, n_actions: int):
+    def approximation_utility_policy(Q: np.ndarray, state: int):
         return np.argmax(Q[state])
