@@ -13,10 +13,18 @@ def mapping(observation: tuple):
     return int(observation[0] * 10 + observation[1])
 
 
-def show_convergence_plot(converge_list: list):
+def moving_average(a, n=3):
+    ret = np.cumsum(a, dtype=float)
+    ret[n:] = ret[n:] - ret[:-n]
+    return ret[n - 1:] / n
+
+
+def show_convergence_plot(converge_list: list, information: str):
+    converge_list = moving_average(converge_list, n=3)
     x = list(range(len(converge_list)))
     y = converge_list
     sns.lineplot(x=x, y=y)
+    plt.suptitle(information)
     plt.show()
 
 
@@ -28,8 +36,8 @@ if __name__ == '__main__':
 
     nS = 100
     nA = 4
-    NUM_EPISODES = 1000
-    NUM_ITERATION = 800
+    NUM_EPISODES = 100
+    NUM_ITERATION = 2000
     epsilon = 0.4
     alpha = 0.1
     gamma = 0.95
@@ -66,7 +74,8 @@ if __name__ == '__main__':
 
     # Close the environment
     env.close()
-    show_convergence_plot(convergence)
+    explanation = f'Episodes: {NUM_EPISODES}, Iteration per Episode: {NUM_ITERATION}, Number of Winning; {win_num}'
+    show_convergence_plot(convergence, information=explanation)
 
     # agent = DeepQLearning(discount_factor=gamma, n_states=nS, n_actions=nA, batch_size=10000, memory_length=2000,
     #                       learning_rate=0.001)
