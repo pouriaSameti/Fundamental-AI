@@ -24,12 +24,10 @@ class DeepQLearning:
         return next_state, reward, done, truncated
 
     def epsilon_greedy_policy(self, state, epsilon=0):
-        print(state)
-        # print(np.newaxis)
-        if np.random.rand() < epsilon:
-            return np.random.randint(self.nA)
-        q_values = self.model.predict(state[np.newaxis])
-        return np.argmax(q_values[0])
+        if np.random.uniform(0, 1) < epsilon:
+            return np.random.choice(range(self.nA))
+        q_values = self.model.predict(state)[0]
+        return np.argmax(q_values)
 
     def train_network(self):
         np.random.shuffle(self.memory)
