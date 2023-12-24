@@ -5,29 +5,12 @@ import itertools
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
-
-
-def random_epsilon_greedy_policy(Q: np.ndarray, state: int, epsilon: float):
-    portoghal = np.random.randint(0, 100) / 100
-    actions = list(range(env.action_space.n))
-    if portoghal < epsilon:
-        return np.random.choice(actions)
-    else:
-        return np.argmax(Q[state])
+from RL import DeepQLearning
+from RL import QLearning
 
 
 def mapping(observation: tuple):
     return int(observation[0] * 10 + observation[1])
-
-
-def reward_euclidean():
-    rewards = list()
-    for x in range(10):
-        for y in range(10):
-            rewards.append((np.sqrt(np.power((x - 9), 2) + np.power((y - 9), 2))) * -0.1)
-
-    rewards[99] = 100
-    return rewards
 
 
 def show_convergence_plot(converge_list: list):
@@ -45,46 +28,43 @@ if __name__ == '__main__':
 
     nS = 100
     nA = 4
-    NUM_EPISODES = 10000
-    NUM_ITERATION = 1000
+    NUM_EPISODES = 1000
+    NUM_ITERATION = 800
     epsilon = 0.4
-    alpha = 0.9
+    alpha = 0.1
     gamma = 0.95
+
+    v = list(range(nS))
     Q = np.zeros([nS, nA])
+
     state = observation
-    # golabi = np.zeros([nS, nA])
-    rewards = reward_euclidean()
-    v_star = list(range(nS))
     convergence = []
 
+    win_num = 0
     for episode in range(NUM_EPISODES):
         observation = env.reset()
+
         for t in itertools.count():
-            action = random_epsilon_greedy_policy(Q, mapping(state), epsilon)
-            # print(action)
-            # Perform the action and receive feedback from the environment
+            action = QLearning.approximation_utility_policy(Q, mapping(state))
+            epsilon -= 0.01
             next_state, reward, done, truncated = env.step(action)
 
             if done or truncated or t == NUM_ITERATION:
+                if done:
+                    win_num += 1
                 t = 0
-                for s in range(nS):
-                    v_star[s] = np.max(Q[s])
-                convergence.append(np.abs(np.sum(v_star)))
-                print(np.sum(v_star))
+                v = QLearning.calculate_v(Q=Q)
+                convergence.append(np.abs(np.sum(v)))
+                state = env.reset()
+
+                print(win_num)
                 break
 
+            Q[mapping(state)][action] += QLearning.qlearning_equation(Q=Q, current_state=mapping(state), action=action,
+                                                                      next_state=mapping(next_state), reward=reward,
+                                                                      alpha=alpha, gamma=gamma)
             state = next_state
-            Q[mapping(state)][action] += alpha * (rewards[mapping(state)] + gamma * np.max(Q[mapping(next_state)]) - Q[mapping(state)][action])
-            epsilon -= 0.01
             env.render()
-        #
-        # if convergence. - convergence[-2] == 0:
-        #     break
-            # if mapping(next_state) == mapping(state):
-            #     golabi[mapping(state)][action] = 1
-            #
-            # if golabi[mapping(state)][0] + golabi[mapping(state)][1] + golabi[mapping(state)][2] + golabi[mapping(state)][3] == 3:
-            #     rewards[mapping(state)] -= 0.01
 
     # Close the environment
     env.close()

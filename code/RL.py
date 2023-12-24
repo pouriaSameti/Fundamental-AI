@@ -10,8 +10,9 @@ class DeepQLearning:
         self.batch_size = batch_size
         self.memory = deque(maxlen=memory_length)
         self.discount_factor = discount_factor
-        self.model = DeepQLearning.__model_initialization(learning_rate=learning_rate)
         self.gamma = gamma
+
+        self.model = DeepQLearning.__model_initialization(learning_rate=learning_rate)
 
         self.nS = n_states
         self.nA = n_actions
@@ -43,7 +44,7 @@ class DeepQLearning:
             q_current_predicted[0][experience["action"]] = q_target
             self.model.fit(experience["current_state"], q_current_predicted, verbose=0)
 
-    def sampling(self,current_state, action, reward, next_state, done):
+    def sampling(self, current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
                             "next_state": next_state, "done": done})
 
