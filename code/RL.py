@@ -6,12 +6,13 @@ from collections import deque
 
 class DeepQLearning:
     def __init__(self, discount_factor: float, n_states: int, n_actions: int, batch_size: int, memory_length: int,
-                 learning_rate: float):
+                 learning_rate: float, gamma: float):
         self.batch_size = batch_size
         self.memory = deque(maxlen=memory_length)
         self.discount_factor = discount_factor
-        self.model = DeepQLearning.__model_initialization(n_states=n_states, n_actions=n_actions,
-                                                          learning_rate=learning_rate)
+        self.model = DeepQLearning.__model_initialization(learning_rate=learning_rate)
+        self.gamma = gamma
+
         self.nS = n_states
         self.nA = n_actions
 
@@ -31,26 +32,20 @@ class DeepQLearning:
         return np.argmax(q_values[0])
 
     def train_network(self):
-        observations = self.sampling()
-        loss_function = keras.losses.mean_squared_error
-        optimizer = keras.optimizers.Adam(lr=1e-3)
+        np.random.shuffle(self.memory)
+        batch_sample = self.memory[:self.batch_size]
 
-        states, actions, rewards, next_states, dones = observations
+        for experience in batch_sample:
+            q_current_predicted = self.model.predict(experience["current_state"])
+            q_target = experience["reward"]
 
-        next_q_values = self.model.predict(next_states)
-        max_next_q = np.max(next_q_values)
-        target_q_values = (rewards + (1 - dones) * self.discount_factor * max_next_q)
+            if not experience["done"]:
+                q_target = q_target + self.gamma * np.max(self.model.predict(experience["next_state"])[0])
 
-        mask = tf.one_hot(actions, self.nA)
-        with tf.GradientTape() as tape:
-            all_q_values = self.model(states)
-            q_values = tf.reduce_sum(all_q_values * mask, axis=1, keepdims=True)
-            error = tf.reduce_mean(loss_function(target_q_values, q_values))
+            q_current_predicted[0][experience["action"]] = q_target
+            self.model.fit(experience["current_state"], q_current_predicted, verbose=0)
 
-        gradients = tape.gradient(error, self.model.trainable_variables)
-        optimizer.apply_gradients(zip(gradients, self.model.trainable_variables))
-
-    def sampling(self, current_state, action, reward, next_state, done):
+    def sampling(self,current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
                             "next_state": next_state, "done": done})
 
