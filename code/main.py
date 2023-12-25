@@ -25,6 +25,8 @@ def show_convergence_plot(converge_list: list, information: str):
     y = converge_list
     sns.lineplot(x=x, y=y)
     plt.suptitle(information)
+    plt.xlabel('Episode')
+    plt.ylabel('Reward')
     plt.show()
 
 
@@ -36,11 +38,11 @@ if __name__ == '__main__':
 
     nS = 100
     nA = 4
-    NUM_EPISODES = 1000
-    NUM_ITERATION = 500
+    NUM_EPISODES = 4000
+    NUM_ITERATION = 800
     epsilon = 0.4
-    alpha = 0.1
-    gamma = 0.95
+    alpha = 0.5
+    gamma = 0.995
 
     v = list(range(nS))
     Q = np.zeros([nS, nA])
@@ -64,7 +66,7 @@ if __name__ == '__main__':
             if done or truncated:
                 win_num += 1
                 state = env.reset()
-                print(win_num)
+                print(win_num, 'Episode:', episode)
                 break
 
             Q[mapping(state)][action] += QLearning.qlearning_equation(Q=Q, current_state=mapping(state), action=action,
