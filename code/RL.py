@@ -60,7 +60,8 @@ class DeepQLearning:
 
     def __model_initialization(self, learning_rate: float):
         model = keras.models.Sequential([
-            keras.layers.Dense(units=30, input_dim=1, activation='elu'),
+            keras.layers.Dense(units=10, input_dim=self.nS, activation='elu'),
+            keras.layers.Dense(units=10, activation='elu'),
             keras.layers.Dense(units=self.nA, activation='linear')
         ])
 
