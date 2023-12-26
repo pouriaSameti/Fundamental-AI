@@ -1,7 +1,5 @@
 import keras
 import numpy as np
-import tensorflow as tf
-from collections import deque
 
 
 class DeepQLearning:
@@ -38,15 +36,15 @@ class DeepQLearning:
         batch_sample = np.random.choice(self.memory, size=self.batch_size)
 
         for experience in batch_sample:
-            q_current_predicted = self.model.predict([experience['current_state']])
+            q_current_predicted = self.model.predict([experience['current_state']])[0]
             q_target = experience["reward"]
 
             if not experience["done"]:
                 q_target = q_target + self.learning_rate * np.max(self.model.predict([experience["next_state"]]))
 
-            q_current_predicted[0][experience["action"]] = q_target
-            print(q_current_predicted[0][experience["action"]])
-            self.model.fit(np.array([experience["current_state"]]), np.array([q_current_predicted]), verbose=0, epochs=1)
+            q_current_predicted[experience["action"]] = q_target
+            exp = self.model.fit(np.array([experience["current_state"]]), np.array([q_current_predicted]), verbose=0, epochs=1)
+            print(exp.history['mean_squared_error'])
 
     def sampling(self, current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
@@ -57,10 +55,9 @@ class DeepQLearning:
 
     def __model_initialization(self, learning_rate: float):
         model = keras.models.Sequential()
-        model.add(keras.layers.Dense(units=10, input_dim=1, activation='elu'))
-        model.add(keras.layers.Dense(units=10, activation='elu'))
+        model.add(keras.layers.Dense(units=20, input_dim=1, activation='elu'))
         model.add(keras.layers.Dense(units=self.nA, activation='linear'))
-        model.compile(loss="mse", optimizer=keras.optimizers.Adam(lr=learning_rate))
+        model.compile(loss="mse", metrics=['mean_squared_error'], optimizer=keras.optimizers.Adam(lr=learning_rate))
         return model
 
     @classmethod
