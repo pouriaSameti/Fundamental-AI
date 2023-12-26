@@ -30,6 +30,16 @@ def show_convergence_plot(converge_list: list, information: str):
     plt.show()
 
 
+def show_mse_plot(error_list: list, information: str):
+    x = list(range(len(error_list)))
+    y = error_list
+    sns.lineplot(x=x, y=y)
+    plt.suptitle(information)
+    plt.xlabel('Episode')
+    plt.ylabel('MSE')
+    plt.show()
+
+
 if __name__ == '__main__':
 
     # Create an environment
@@ -80,32 +90,47 @@ if __name__ == '__main__':
     # explanation = f'Episodes: {NUM_EPISODES}, Iteration per Episode: {NUM_ITERATION}, Number of Winning; {win_num}'
     # show_convergence_plot(convergence, information=explanation)
 
-    BATCH_SIZE = 200
-    MEMORY_LENGTH = 1000
-    LEARNING_RATE = 0.001
-    DECAY_RATE = 0.005
+    TRAINING_EPISODES = 500
+    BATCH_SIZE = 40
+    MEMORY_LENGTH = 100
+    LEARNING_RATE = 0.01
+    DECAY_RATE = 0.0000001
+    EPOCH = 20
     agent = DeepQLearning(discount_factor=gamma, n_states=nS, n_actions=nA, batch_size=BATCH_SIZE,
-                          memory_length=MEMORY_LENGTH, learning_rate=LEARNING_RATE)
+                          memory_length=MEMORY_LENGTH, learning_rate=LEARNING_RATE, each_epoch=EPOCH)
 
+    # Learning Loop
     total_steps = 0
-    for e in range(NUM_EPISODES):
+    mse_errors = []
+    for e in range(TRAINING_EPISODES):
         current_state = env.reset()
 
         for step in itertools.count():
-            total_steps += 1
-            next_state, reward, done, truncated = agent.play(env=env, state=current_state, epsilon=epsilon)
             env.render()
-            if step >= BATCH_SIZE:
-                agent.train_network()
+
+            total_steps += 1
+
+            action = agent.random_policy()
+            next_state, reward, done, truncated = env.step(action)
+            map_state = DeepQLearning.mapping(state)
+            map_next_state = DeepQLearning.mapping(next_state)
+
+            agent.sampling(current_state=map_state, action=action, reward=reward, next_state=map_next_state, done=done)
+
+            if done:
+                mean_mse = agent.train_network()
+                mse_errors.append(mean_mse)
                 total_steps = 0
                 current_state = env.reset()
                 break
-        epsilon = DeepQLearning.epsilon_exp_decay(epsilon=epsilon, decay_rate=DECAY_RATE)
 
     print('End of the learning')
+
     current_state = env.reset()
-    for _ in range(5000):
-        next_state, reward, done, truncated = agent.play(env=env, state=current_state, epsilon=epsilon)
+    for _ in range(NUM_EPISODES):
+        action = agent.best_utility_policy(current_state)
+        next_state, reward, done, truncated = env.step(action)
+        current_state = next_state
         env.render()
 
     env.cloce()

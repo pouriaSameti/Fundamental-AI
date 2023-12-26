@@ -56,7 +56,7 @@ class DeepQLearning:
             exp = self.model.fit(np.array([experience["current_state"]]), np.array([q_current_predicted]), verbose=0,
                                  epochs=self.each_epoch)
             mse_errors.append(exp.history['mean_squared_error'])
-        print('Mean mse errors', np.mean(mse_errors))
+        return np.mean(mse_errors)
 
     def sampling(self, current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
