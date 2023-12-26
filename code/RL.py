@@ -19,8 +19,8 @@ class DeepQLearning:
         action = self.epsilon_greedy_policy(state, epsilon)
         next_state, reward, done, truncated = env.step(action)
 
-        map_state = self.__mapping(state)
-        map_next_state = self.__mapping(next_state)
+        map_state = self.mapping(state)
+        map_next_state = self.mapping(next_state)
 
         self.sampling(current_state=map_state, action=action, reward=reward, next_state=map_next_state, done=done)
         return next_state, reward, done, truncated
@@ -29,7 +29,7 @@ class DeepQLearning:
         if np.random.rand() < epsilon:
             return np.random.choice(range(self.nA))
 
-        current_state = self.__mapping(state)
+        current_state = self.mapping(state)
         q_values = self.model.predict([current_state])[0]
         return np.argmax(q_values)
 
@@ -37,7 +37,7 @@ class DeepQLearning:
         return np.random.choice(range(self.nA))
 
     def best_utility_policy(self, state):
-        current_state = self.__mapping(state)
+        current_state = self.mapping(state)
         q_values = self.model.predict([current_state])[0]
         return np.argmax(q_values)
 
@@ -68,12 +68,13 @@ class DeepQLearning:
     def __model_initialization(self, learning_rate: float):
         model = keras.models.Sequential()
         model.add(keras.layers.Dense(units=20, input_dim=1, activation='elu'))
+        model.add(keras.layers.Dense(units=10, activation='elu'))
         model.add(keras.layers.Dense(units=self.nA, activation='linear'))
         model.compile(loss="mse", metrics=['mean_squared_error'], optimizer=keras.optimizers.Adam(lr=learning_rate))
         return model
 
     @classmethod
-    def __mapping(cls, observation: tuple):
+    def mapping(cls, observation: tuple):
         return int(observation[0] * 10 + observation[1])
 
     @classmethod
