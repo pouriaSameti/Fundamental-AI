@@ -33,9 +33,18 @@ class DeepQLearning:
         q_values = self.model.predict([current_state])[0]
         return np.argmax(q_values)
 
+    def random_policy(self):
+        return np.random.choice(range(self.nA))
+
+    def best_utility_policy(self, state):
+        current_state = self.__mapping(state)
+        q_values = self.model.predict([current_state])[0]
+        return np.argmax(q_values)
+
     def train_network(self):
         batch_sample = np.random.choice(self.memory, size=self.batch_size)
 
+        mse_errors = []
         for experience in batch_sample:
             q_current_predicted = self.model.predict([experience['current_state']])[0]
             q_target = experience["reward"]
@@ -46,7 +55,8 @@ class DeepQLearning:
             q_current_predicted[experience["action"]] = q_target
             exp = self.model.fit(np.array([experience["current_state"]]), np.array([q_current_predicted]), verbose=0,
                                  epochs=self.each_epoch)
-            print(exp.history['mean_squared_error'])
+            mse_errors.append(exp.history['mean_squared_error'])
+        print('Mean mse errors', np.mean(mse_errors))
 
     def sampling(self, current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
