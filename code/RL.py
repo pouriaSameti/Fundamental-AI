@@ -8,6 +8,7 @@ class DeepQLearning:
     def __init__(self, discount_factor: float, n_states: int, n_actions: int, batch_size: int, memory_length: int,
                  learning_rate: float):
         self.batch_size = batch_size
+        self.memory_length = memory_length
         self.memory = list()
         self.discount_factor = discount_factor
         self.learning_rate = learning_rate
@@ -42,15 +43,20 @@ class DeepQLearning:
             q_target = experience["reward"]
 
             if not experience["done"]:
-                q_target = q_target + self.gamma * np.max(self.model.predict([experience["next_state"]])[0])
+                q_target = q_target + self.learning_rate * np.max(self.model.predict([experience["next_state"]])[0])
 
             q_current_predicted[0][experience["action"]] = q_target
-            predicted_action = max(range(len(q_current_predicted[0])), key=lambda i: q_current_predicted[0][i])
-            self.model.fit(np.array([experience["current_state"]]), np.array([predicted_action]), verbose=0)
+            print(np.array([experience["current_state"]], shape=(1, self.nS)))
+
+            self.model.fit(np.narray([experience["current_state"]], shape=(1, self.nS)),
+                           np.narray([q_current_predicted]), verbose=0, epochs=1)
 
     def sampling(self, current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
                             "next_state": next_state, "done": done})
+
+        if len(self.memory) > self.memory_length:
+            self.memory.pop(0)
 
     def __model_initialization(self, learning_rate: float):
         model = keras.models.Sequential([
