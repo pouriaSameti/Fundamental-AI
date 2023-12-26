@@ -83,6 +83,7 @@ if __name__ == '__main__':
     BATCH_SIZE = 200
     MEMORY_LENGTH = 1000
     LEARNING_RATE = 0.001
+    DECAY_RATE = 0.005
     agent = DeepQLearning(discount_factor=gamma, n_states=nS, n_actions=nA, batch_size=BATCH_SIZE,
                           memory_length=MEMORY_LENGTH, learning_rate=LEARNING_RATE)
 
@@ -99,6 +100,7 @@ if __name__ == '__main__':
                 total_steps = 0
                 current_state = env.reset()
                 break
+        epsilon = DeepQLearning.epsilon_exp_decay(epsilon=epsilon, decay_rate=DECAY_RATE)
 
     print('End of the learning')
     current_state = env.reset()

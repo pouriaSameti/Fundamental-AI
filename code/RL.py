@@ -71,6 +71,11 @@ class DeepQLearning:
     def __mapping(cls, observation: tuple):
         return int(observation[0] * 10 + observation[1])
 
+    @classmethod
+    def epsilon_exp_decay(cls, epsilon, decay_rate):
+        epsilon = epsilon * np.exp(-decay_rate)
+        return epsilon
+
 
 class QLearning:
 
