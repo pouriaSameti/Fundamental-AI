@@ -50,7 +50,7 @@ class DeepQLearning:
             q_target = experience["reward"]
 
             if not experience["done"]:
-                q_target = q_target + self.learning_rate * np.max(self.model.predict([experience["next_state"]])[0])
+                q_target = q_target + self.discount_factor * np.max(self.model.predict([experience["next_state"]])[0])
 
             q_current_predicted[experience["action"]] = q_target
             exp = self.model.fit(np.array([experience["current_state"]]), np.array([q_current_predicted]), verbose=0,
