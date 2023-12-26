@@ -4,12 +4,13 @@ import numpy as np
 
 class DeepQLearning:
     def __init__(self, discount_factor: float, n_states: int, n_actions: int, batch_size: int, memory_length: int,
-                 learning_rate: float):
+                 learning_rate: float, each_epoch: int):
         self.batch_size = batch_size
         self.memory_length = memory_length
         self.memory = list()
         self.discount_factor = discount_factor
         self.learning_rate = learning_rate
+        self.each_epoch = each_epoch
         self.nS = n_states
         self.nA = n_actions
         self.model = DeepQLearning.__model_initialization(self, learning_rate=learning_rate)
@@ -40,10 +41,11 @@ class DeepQLearning:
             q_target = experience["reward"]
 
             if not experience["done"]:
-                q_target = q_target + self.learning_rate * np.max(self.model.predict([experience["next_state"]]))
+                q_target = q_target + self.learning_rate * np.max(self.model.predict([experience["next_state"]])[0])
 
             q_current_predicted[experience["action"]] = q_target
-            exp = self.model.fit(np.array([experience["current_state"]]), np.array([q_current_predicted]), verbose=0, epochs=1)
+            exp = self.model.fit(np.array([experience["current_state"]]), np.array([q_current_predicted]), verbose=0,
+                                 epochs=self.each_epoch)
             print(exp.history['mean_squared_error'])
 
     def sampling(self, current_state, action, reward, next_state, done):
