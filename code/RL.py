@@ -70,7 +70,7 @@ class DeepQLearning:
         model.add(keras.layers.Dense(units=20, input_dim=1, activation='elu'))
         model.add(keras.layers.Dense(units=10, activation='elu'))
         model.add(keras.layers.Dense(units=self.nA, activation='linear'))
-        model.compile(loss="mse", metrics=['mean_squared_error'], optimizer=keras.optimizers.Adam(lr=learning_rate))
+        model.compile(loss="mse", metrics=['mean_squared_error'], optimizer=keras.optimizers.Adam(learning_rate=learning_rate))
         return model
 
     @classmethod
