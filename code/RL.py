@@ -26,8 +26,8 @@ class DeepQLearning:
         self.sampling(current_state=map_state, action=action, reward=reward, next_state=map_next_state, done=done)
         return next_state, reward, done, truncated
 
-    def epsilon_greedy_policy(self, state, epsilon=0):
-        if np.random.uniform(0, 1) < epsilon:
+    def epsilon_greedy_policy(self, state, epsilon):
+        if np.random.rand() < epsilon:
             return np.random.choice(range(self.nA))
 
         current_state = self.__mapping(state)
@@ -35,21 +35,18 @@ class DeepQLearning:
         return np.argmax(q_values)
 
     def train_network(self):
-        np.random.shuffle(self.memory)
-        batch_sample = self.memory[:self.batch_size]
+        batch_sample = np.random.choice(self.memory, size=self.batch_size)
 
         for experience in batch_sample:
-            q_current_predicted = self.model.predict([experience["current_state"]])
+            q_current_predicted = self.model.predict([experience['current_state']])
             q_target = experience["reward"]
 
             if not experience["done"]:
-                q_target = q_target + self.learning_rate * np.max(self.model.predict([experience["next_state"]])[0])
+                q_target = q_target + self.learning_rate * np.max(self.model.predict([experience["next_state"]]))
 
             q_current_predicted[0][experience["action"]] = q_target
-            print(np.array([experience["current_state"]], shape=(1, self.nS)))
-
-            self.model.fit(np.narray([experience["current_state"]], shape=(1, self.nS)),
-                           np.narray([q_current_predicted]), verbose=0, epochs=1)
+            print(q_current_predicted[0][experience["action"]])
+            self.model.fit(np.array([experience["current_state"]]), np.array([q_current_predicted]), verbose=0, epochs=1)
 
     def sampling(self, current_state, action, reward, next_state, done):
         self.memory.append({"current_state": current_state, "action": action, "reward": reward,
@@ -59,12 +56,10 @@ class DeepQLearning:
             self.memory.pop(0)
 
     def __model_initialization(self, learning_rate: float):
-        model = keras.models.Sequential([
-            keras.layers.Dense(units=10, input_dim=self.nS, activation='elu'),
-            keras.layers.Dense(units=10, activation='elu'),
-            keras.layers.Dense(units=self.nA, activation='linear')
-        ])
-
+        model = keras.models.Sequential()
+        model.add(keras.layers.Dense(units=10, input_dim=1, activation='elu'))
+        model.add(keras.layers.Dense(units=10, activation='elu'))
+        model.add(keras.layers.Dense(units=self.nA, activation='linear'))
         model.compile(loss="mse", optimizer=keras.optimizers.Adam(lr=learning_rate))
         return model
 
