@@ -19,6 +19,14 @@ def moving_average(a, n=3):
     return ret[n - 1:] / n
 
 
+def reward_euclidean():
+    rewards = list()
+    for x in range(10):
+        for y in range(10):
+            rewards.append((np.sqrt(np.power((x - 9), 2) + np.power((y - 9), 2))) * -0.1)
+    return rewards
+
+
 def show_convergence_plot(converge_list: list, information: str):
     converge_list = moving_average(converge_list, n=3)
     x = list(range(len(converge_list)))
@@ -90,10 +98,10 @@ if __name__ == '__main__':
     # explanation = f'Episodes: {NUM_EPISODES}, Iteration per Episode: {NUM_ITERATION}, Number of Winning; {win_num}'
     # show_convergence_plot(convergence, information=explanation)
 
-    TRAINING_EPISODES = 500
-    BATCH_SIZE = 40
-    MEMORY_LENGTH = 100
-    LEARNING_RATE = 0.01
+    TRAINING_EPISODES = 70
+    BATCH_SIZE = 50
+    MEMORY_LENGTH = 150
+    LEARNING_RATE = 0.001
     DECAY_RATE = 0.0000001
     EPOCH = 20
     agent = DeepQLearning(discount_factor=gamma, n_states=nS, n_actions=nA, batch_size=BATCH_SIZE,
@@ -105,32 +113,39 @@ if __name__ == '__main__':
     for e in range(TRAINING_EPISODES):
         current_state = env.reset()
 
+        print('Episode:', e)
         for step in itertools.count():
             env.render()
 
             total_steps += 1
-
             action = agent.random_policy()
             next_state, reward, done, truncated = env.step(action)
+
             map_state = DeepQLearning.mapping(state)
             map_next_state = DeepQLearning.mapping(next_state)
-
             agent.sampling(current_state=map_state, action=action, reward=reward, next_state=map_next_state, done=done)
+
+            uec_reward = reward_euclidean()[map_state]
+            agent.sampling(current_state=map_state, action=action, reward=uec_reward, next_state=map_next_state, done=done)
 
             if done:
                 mean_mse = agent.train_network()
                 mse_errors.append(mean_mse)
-                total_steps = 0
-                current_state = env.reset()
                 break
 
     print('End of the learning')
 
     current_state = env.reset()
+    winning_times = 0
+
     for _ in range(NUM_EPISODES):
         action = agent.best_utility_policy(current_state)
         next_state, reward, done, truncated = env.step(action)
         current_state = next_state
         env.render()
-
-    env.cloce()
+        if done:
+            current_state = env.reset()
+            winning_times += 1
+    env.close()
+    information = f'Episodes={TRAINING_EPISODES}, Total steps: {total_steps}'
+    show_mse_plot(error_list=mse_errors, information=information)
