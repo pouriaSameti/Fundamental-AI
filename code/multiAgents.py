@@ -86,5 +86,19 @@ class AIAgent(MultiAgentSearchAgent):
         chosen_action = action[random.choice(max_indexs)]
         return max_score, chosen_action
     
-    
+    def rooh_value(self, game_state: GameState, depth: int, agent_index: int):
+        legal_actions = game_state.getLegalActions(agent_index)
+        scores = []
+        for action in legal_actions:
+            next_game_state = game_state.generateSuccessor(agent_index, action)
+            
+            if agent_index == game_state.getNumAgents() - 1: # next turn = pac turn
+                scores.append(self.minimax(next_game_state, depth - 1, agent_index = 0, pac_turn = True)[0])
+            else: 
+                scores.append(self.minimax(next_game_state, depth, agent_index = agent_index + 1, pac_turn = False)[0])
+        
+        min_score = min(scores)
+        min_indexs = [i for i, score in enumerate(scores) if score == min_score]
+        chosen_action = action[random.choice(min_indexs)]
+        return min_score, chosen_action
     
