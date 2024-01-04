@@ -19,15 +19,47 @@ import random, util
 from game import Agent
 from pacman import GameState
 
+def heuristic(current_game_state: GameState, action: str):
+    # next_game_state = current_game_state.generatePacmanSuccessor(action)
+    # new_position = next_game_state.getPacmanPosition()
+    # new_food = next_game_state.getFood()
+    # food_position = new_food.asList()
+    # new_ghost_states = next_game_state.getGhostStates()
+    # new_scared_times = [ghost_state.scaredTimer for ghost_state in new_ghost_states]
+    # score = 0
+    
+    new_position = current_game_state.getPacmanPosition()
+    new_food = current_game_state.getFood()
+    food_position = new_food.asList()
+    new_ghost_states = current_game_state.getGhostStates()
+    new_scared_times = [ghost_state.scaredTimer for ghost_state in new_ghost_states]
+    score = 0
+    
+    for rooh in new_ghost_states:
+        if util.manhattanDistance(rooh.getPosition(), new_position) <= 3:
+            score -= -30
+    
+    food_distances = []
+    for food in food_position:
+        food_distances.append(util.manhattanDistance(food, new_position))
+    
+    if len(food_distances) > 0:
+        closest_food = min(food_distances)
+        score -= closest_food
+    
+    
+    return score
+    
+        
+    
 
 def scoreEvaluationFunction(currentGameState: GameState):
-    """
-    This default evaluation function just returns the score of the state.
-    The score is the same one displayed in the Pacman GUI.
-
-    This evaluation function is meant for use with adversarial search agents
-    """
-    return currentGameState.getScore()
+    # legal_actions = currentGameState.getLegalActions(0)
+    # scores = []
+    # for action in legal_actions:
+    #     scores.append(heuristic(currentGameState,action))
+    # return max(scores)
+    return currentGameState.getScore() # + heuristic(current_game_state=currentGameState, action='WEST')
 
 
 class MultiAgentSearchAgent(Agent):
@@ -41,7 +73,8 @@ class MultiAgentSearchAgent(Agent):
 class AIAgent(MultiAgentSearchAgent):
 
     def getAction(self, gameState: GameState):
-        chosen_action = self.minimax(gameState, self.depth, agent_index=self.index, pac_turn=True)[1]
+        chosen_action = self.minimax(gameState, self.depth, agent_index=self.index, pac_turn=True)[1]    
+        print(gameState.generatePacmanSuccessor(Directions.STOP))
         return chosen_action
         # util.raiseNotDefined()
         
