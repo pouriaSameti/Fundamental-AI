@@ -39,11 +39,9 @@ class MultiAgentSearchAgent(Agent):
 
 
 class AIAgent(MultiAgentSearchAgent):
-    
-    
+
     def getAction(self, gameState: GameState):
-        chosen_action = self.minimax(gameState, self.depth, agent_index = self.index, pac_turn = True)[1]
-        print(chosen_action)
+        chosen_action = self.minimax(gameState, self.depth, agent_index=self.index, pac_turn=True)[1]
         return chosen_action
         # util.raiseNotDefined()
         
@@ -61,11 +59,11 @@ class AIAgent(MultiAgentSearchAgent):
         scores = []
         for action in legal_actions:
             next_game_state = game_state.generateSuccessor(agent_index, action)
-            scores.append(self.minimax(next_game_state, depth, agent_index = agent_index + 1, pac_turn = False)[0])
+            scores.append(self.minimax(next_game_state, depth, agent_index = agent_index + 1, pac_turn=False)[0])
         
         max_score = max(scores)
-        max_indexs = [i for i, score in enumerate(scores) if score == max_score]
-        chosen_action = action[random.choice(max_indexs)]
+        max_indexes = [i for i, score in enumerate(scores) if score == max_score]
+        chosen_action = legal_actions[random.choice(max_indexes)]
         return max_score, chosen_action
     
     def rooh_value(self, game_state: GameState, depth: int, agent_index: int): 
@@ -75,12 +73,12 @@ class AIAgent(MultiAgentSearchAgent):
             next_game_state = game_state.generateSuccessor(agent_index, action)
             
             if agent_index == game_state.getNumAgents() - 1: # next turn = pac turn
-                scores.append(self.minimax(next_game_state, depth - 1, agent_index = 0, pac_turn = True)[0])
+                scores.append(self.minimax(next_game_state, depth - 1, agent_index=0, pac_turn=True)[0])
             else: 
-                scores.append(self.minimax(next_game_state, depth, agent_index = agent_index + 1, pac_turn = False)[0])
+                scores.append(self.minimax(next_game_state, depth, agent_index=agent_index + 1, pac_turn=False)[0])
         
         min_score = min(scores)
-        min_indexs = [i for i, score in enumerate(scores) if score == min_score]
-        chosen_action = action[random.choice(min_indexs)]
+        min_indexes = [i for i, score in enumerate(scores) if score == min_score]
+        chosen_action = legal_actions[random.choice(min_indexes)]
         return min_score, chosen_action
     
