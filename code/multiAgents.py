@@ -65,7 +65,7 @@ class AIAgent(MultiAgentSearchAgent):
 
         # TODO: Your code goes here
         # util.raiseNotDefined()
-    def minimax(self, game_state: GameState, depth: int, agent: int, pac_turn = True):
+    def minimax(self, game_state: GameState, depth: int, agent_index: int, pac_turn = True):
         if depth == 0 or game_state.isWin() or game_state.isLose():
             return game_state.getScore()
         
@@ -73,3 +73,18 @@ class AIAgent(MultiAgentSearchAgent):
             return self.pac_value()
         else: 
             return self.rooh_value()
+    
+    def pac_value(self, game_state: GameState, depth: int, agent_index: int):
+        legal_actions = game_state.getLegalActions(agent_index)
+        scores = []
+        for action in legal_actions:
+            next_game_state = game_state.generateSuccessor(agent_index, action)
+            scores.append(self.minimax(next_game_state, depth, agent_index = agent_index + 1, pac_turn = False)[0])
+        
+        max_score = max(scores)
+        max_indexs = [i for i, score in enumerate(scores) if score == max_score]
+        chosen_action = action[random.choice(max_indexs)]
+        return max_score, chosen_action
+    
+    
+    
