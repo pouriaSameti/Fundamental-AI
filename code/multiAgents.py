@@ -39,7 +39,10 @@ class MultiAgentSearchAgent(Agent):
 
 
 class AIAgent(MultiAgentSearchAgent):
+    
+    
     def getAction(self, gameState: GameState):
+        pass
         """
         Here are some method calls that might be useful when implementing minimax.
 
@@ -62,3 +65,11 @@ class AIAgent(MultiAgentSearchAgent):
 
         # TODO: Your code goes here
         # util.raiseNotDefined()
+    def minimax(self, game_state: GameState, depth: int, agent: int, pac_turn = True):
+        if depth == 0 or game_state.isWin() or game_state.isLose():
+            return game_state.getScore()
+        
+        if pac_turn:
+            return self.pac_value()
+        else: 
+            return self.rooh_value()
