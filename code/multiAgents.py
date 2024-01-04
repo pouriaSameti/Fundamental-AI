@@ -42,29 +42,10 @@ class AIAgent(MultiAgentSearchAgent):
     
     
     def getAction(self, gameState: GameState):
-        pass
-        """
-        Here are some method calls that might be useful when implementing minimax.
-
-        gameState.getLegalActions(agentIndex):
-        Returns a list of legal actions for an agent
-        agentIndex=0 means Pacman, ghosts are >= 1
-
-        gameState.generateSuccessor(agentIndex, action):
-        Returns the successor game state after an agent takes an action
-
-        gameState.getNumAgents():
-        Returns the total number of agents in the game
-
-        gameState.isWin():
-        Returns whether or not the game state is a winning state
-
-        gameState.isLose():
-        Returns whether or not the game state is a losing state
-        """
-
-        # TODO: Your code goes here
-        # util.raiseNotDefined()
+        chosen_action = self.minimax(gameState, self.depth)[1]
+        return chosen_action
+        util.raiseNotDefined()
+        
     def minimax(self, game_state: GameState, depth: int, agent_index: int, pac_turn = True):
         if depth == 0 or game_state.isWin() or game_state.isLose():
             return game_state.getScore()
