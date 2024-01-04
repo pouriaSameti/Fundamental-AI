@@ -19,7 +19,8 @@ import random, util
 from game import Agent
 from pacman import GameState
 
-def heuristic(current_game_state: GameState, action: str):
+
+def heuristic(current_game_state: GameState):
     # next_game_state = current_game_state.generatePacmanSuccessor(action)
     # new_position = next_game_state.getPacmanPosition()
     # new_food = next_game_state.getFood()
@@ -35,22 +36,21 @@ def heuristic(current_game_state: GameState, action: str):
     new_scared_times = [ghost_state.scaredTimer for ghost_state in new_ghost_states]
     score = 0
     
-    for rooh in new_ghost_states:
-        if util.manhattanDistance(rooh.getPosition(), new_position) <= 3:
-            score -= -30
-    
     food_distances = []
     for food in food_position:
         food_distances.append(util.manhattanDistance(food, new_position))
+
+    for rooh in new_ghost_states:
+        if util.manhattanDistance(rooh.getPosition(), new_position) <= 3:
+            score += 20
     
     if len(food_distances) > 0:
         closest_food = min(food_distances)
         score -= closest_food
-    
-    
+
+    if not current_game_state.hasFood(new_position[0], new_position[1]):
+        score -= 20
     return score
-    
-        
     
 
 def scoreEvaluationFunction(currentGameState: GameState):
@@ -59,7 +59,8 @@ def scoreEvaluationFunction(currentGameState: GameState):
     # for action in legal_actions:
     #     scores.append(heuristic(currentGameState,action))
     # return max(scores)
-    return currentGameState.getScore() # + heuristic(current_game_state=currentGameState, action='WEST')
+    # return currentGameState.getScore() + heuristic(current_game_state=currentGameState, action='WEST')
+    return heuristic(currentGameState) + currentGameState.getScore()
 
 
 class MultiAgentSearchAgent(Agent):
@@ -74,9 +75,8 @@ class AIAgent(MultiAgentSearchAgent):
 
     def getAction(self, gameState: GameState):
         chosen_action = self.minimax(gameState, self.depth, agent_index=self.index, pac_turn=True)[1]    
-        print(gameState.generatePacmanSuccessor(Directions.STOP))
         return chosen_action
-        # util.raiseNotDefined()
+        util.raiseNotDefined()
         
     def minimax(self, game_state: GameState, depth: int, agent_index: int, pac_turn = True):
         if depth == 0 or game_state.isWin() or game_state.isLose():
