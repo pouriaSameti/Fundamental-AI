@@ -42,14 +42,24 @@ def heuristic(current_game_state: GameState):
 
     for rooh in new_ghost_states:
         if util.manhattanDistance(rooh.getPosition(), new_position) <= 3:
-            score += 20
+            score -= 30
     
     if len(food_distances) > 0:
         closest_food = min(food_distances)
-        score -= closest_food
+        score += closest_food
 
     if not current_game_state.hasFood(new_position[0], new_position[1]):
-        score -= 20
+        score -= 10
+
+    if current_game_state.isLose():
+        score -= 500
+
+    for ghostState in new_ghost_states:
+        if ghostState.scaredTimer >= 1:
+            manhattan_distance = manhattanDistance(new_position, ghostState.getPosition())
+            if manhattan_distance == 0:
+                score += 100
+
     return score
     
 
@@ -60,7 +70,11 @@ def scoreEvaluationFunction(currentGameState: GameState):
     #     scores.append(heuristic(currentGameState,action))
     # return max(scores)
     # return currentGameState.getScore() + heuristic(current_game_state=currentGameState, action='WEST')
-    return heuristic(currentGameState) + currentGameState.getScore()
+    h = heuristic(currentGameState)
+    score = currentGameState.getScore()
+    print('hueristic', h)
+    print('score', score)
+    return score + h
 
 
 class MultiAgentSearchAgent(Agent):
@@ -74,7 +88,7 @@ class MultiAgentSearchAgent(Agent):
 class AIAgent(MultiAgentSearchAgent):
 
     def getAction(self, gameState: GameState):
-        chosen_action = self.minimax(gameState, self.depth, agent_index=self.index, pac_turn=True)[1]    
+        chosen_action = self.minimax(gameState, self.depth, agent_index=self.index, pac_turn=True)[1]
         return chosen_action
         util.raiseNotDefined()
         
