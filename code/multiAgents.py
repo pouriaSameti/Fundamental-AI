@@ -62,17 +62,7 @@ def heuristic(current_game_state: GameState):
     
 
 def scoreEvaluationFunction(currentGameState: GameState):
-    # legal_actions = currentGameState.getLegalActions(0)
-    # scores = []
-    # for action in legal_actions:
-    #     scores.append(heuristic(currentGameState,action))
-    # return max(scores)
-    # return currentGameState.getScore() + heuristic(current_game_state=currentGameState, action='WEST')
-    h = heuristic(currentGameState)
-    score = currentGameState.getScore()
-    print('hueristic', h)
-    print('score', score)
-    return score + h
+    return heuristic(currentGameState)
 
 
 class MultiAgentSearchAgent(Agent):
