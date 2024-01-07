@@ -26,7 +26,6 @@ def heuristic(current_game_state: GameState):
     new_food = current_game_state.getFood()
     food_position = new_food.asList()
     new_ghost_states = current_game_state.getGhostStates()
-    new_scared_times = [ghost_state.scaredTimer for ghost_state in new_ghost_states]
     score = current_game_state.getScore()
     
     food_distances = []
@@ -35,19 +34,16 @@ def heuristic(current_game_state: GameState):
 
     for rooh in new_ghost_states:
         if util.manhattanDistance(rooh.getPosition(), new_position) <= 3 and util.manhattanDistance(rooh.getPosition(), new_position) != 0:
-            score -= (1/util.manhattanDistance(rooh.getPosition(), new_position)) * 15
+            score -= (1/util.manhattanDistance(rooh.getPosition(), new_position)) * 100
     
     if len(food_distances) > 0:
         closest_food = min(food_distances)
-        score -= closest_food 
+        score -= closest_food * (1/len(food_distances))
 
     if not current_game_state.hasFood(new_position[0], new_position[1]):
-        score -= 50
+        score -= 100
     else:
-        score += 10
-
-    if current_game_state.isLose():
-        score -= 500
+        score += 20
     
     
     for ghostState in new_ghost_states:
@@ -57,6 +53,9 @@ def heuristic(current_game_state: GameState):
                 score += 200
             elif manhattan_distance < ghostState.scaredTimer:
                 score += (1/manhattan_distance) * 200
+    
+    if current_game_state.isLose():
+        score = -2000
 
     return score
     
@@ -98,8 +97,8 @@ class AIAgent(MultiAgentSearchAgent):
         
         max_score = max(scores)
         max_indexes = [i for i, score in enumerate(scores) if score == max_score]
-        # chosen_action = legal_actions[random.choice(max_indexes)]
-        chosen_action = legal_actions[max_indexes[0]]
+        chosen_action = legal_actions[random.choice(max_indexes)]
+        # chosen_action = legal_actions[max_indexes[0]]
         return max_score, chosen_action
     
     def rooh_value(self, game_state: GameState, depth: int, agent_index: int): 
@@ -115,7 +114,7 @@ class AIAgent(MultiAgentSearchAgent):
         
         min_score = min(scores)
         min_indexes = [i for i, score in enumerate(scores) if score == min_score]
-        # chosen_action = legal_actions[random.choice(min_indexes)]
-        chosen_action = legal_actions[min_indexes[0]]
+        chosen_action = legal_actions[random.choice(min_indexes)]
+        # chosen_action = legal_actions[min_indexes[0]]
         return min_score, chosen_action
     
