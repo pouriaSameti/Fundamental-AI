@@ -33,8 +33,7 @@ def heuristic(current_game_state: GameState):
         food_distances.append(util.manhattanDistance(food, new_position))
 
     for rooh in new_ghost_states:
-        if util.manhattanDistance(rooh.getPosition(), new_position) <= 1  and util.manhattanDistance(rooh.getPosition(), new_position) != 0:
-            # score -= (1/util.manhattanDistance(rooh.getPosition(), new_position)) * 200        # two ghosts
+        if util.manhattanDistance(rooh.getPosition(), new_position) <= 1 and util.manhattanDistance(rooh.getPosition(), new_position) != 0:
             score -= 50
     
     if len(food_distances) > 0:
