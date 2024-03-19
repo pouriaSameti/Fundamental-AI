@@ -156,8 +156,8 @@ To Run this project, run these commands:
 <br>  
 <br>
 
-## Pacman
-The goal of this project is to implement an intelligent agent that works in the Pacman game environment and earns the most points.
+## Game
+The goal of this project is to implement an intelligent agent that works in the **Pacman game** environment and earns the most points.
 
 ### Environment
 - In this phase, we use the Pacman environment developed by **UC Berkeley**. 
@@ -176,14 +176,21 @@ The goal of this project is to implement an intelligent agent that works in the 
 
 > [!TIP]
 >  We have a multi-agent environment. So our problem is winning the game with the maximum score.  
-> We evaluated our heuristic method and caught **200 wins from 200 games** in this game with this heuristic method.
+> We evaluated our heuristic method and caught **100 wins from 100 games** with 1 directional ghost in this game with this heuristic method.
 
 
 
 ### Running The Game
 To run the game with intelligent ghosts, run this command in the folder of the game:
+
+1. Running with 1 directional Ghost for 100 times:
 ```python
-  python setup.py install
+  python pacman.py -p AIAgent -k 1 -a depth=4 -g DirectionalGhost -n 100
+```
+
+2. Running 1 ghost with stochastic actions:
+```python
+  python pacman.py -p AIAgent -k 1 -a depth=4 -n 100
 ```
 
 ### implementation
