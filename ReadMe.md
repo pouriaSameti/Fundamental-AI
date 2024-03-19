@@ -1,5 +1,5 @@
 
-# Projects of The Artificial Intelligence Fundamentals Course 
+# The Artificial Intelligence Fundamentals Course Projects 
 
 These projects are related to Machine Learning, Reinforcement Learning & First order logic under the supervision of Dr Hossein Karshenas at the University of Isfahan.
 
@@ -187,6 +187,7 @@ To run the game with intelligent ghosts, run this command in the folder of the g
 ```python
   python pacman.py -p AIAgent -k 1 -a depth=4 -g DirectionalGhost -n 100
 ```
+<br>
 
 2. Running 1 ghost with stochastic actions:
 ```python
