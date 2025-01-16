@@ -1,25 +1,18 @@
 
 # The Artificial Intelligence Fundamentals Course Projects 
 
-These projects are related to Machine Learning, Reinforcement Learning & First order logic under the supervision of Dr Hossein Karshenas at the University of Isfahan.
-
+These projects are part of the **Artificial Intelligence Fundamentals course** at the **University of Isfahan**. The projects cover topics in **Machine Learning, Reinforcement Learning, and First Order Logic**, all developed under the supervision of **Dr. Hossein Karshenas**.
 ### Developers
 - [Pouria Sameti](https://github.com/pouriaSameti)
 - [Kimya Mirmoghtadaie](https://github.com/Kimya-M)
 
-<br>  
-<br> 
-
-
 ## Dijkstra & Astar
 
-We implement a graph data structure to apply Dijkstra and Astar Algorithms on the nodes to find the shortest path between points in the graph.
-
-Our nodes are airports. We want to find the shortest path between them with the minimum time cost. 
+This project demonstrates the implementation of a graph data structure to apply Dijkstra's and A* (Astar) algorithms for finding the shortest path between nodes in a graph. In this implementation, the graph nodes represent airports, and the goal is to determine the shortest path between airports with the minimum cost. 
 
 ### Installation
 
-To Run this project, run these commands:
+To run this project, install the required dependencies by executing the following commands:
 
 ```python
   pip install numpy
@@ -29,28 +22,30 @@ To Run this project, run these commands:
 ```
 
 ### Features
-1. You can see the result of the Execution of Dijkstra and Astar Algorithms in the **.txt** files in the folder of the project for any origin & destination in the Graph.
-2. Every time you run this program, you should give your **origin and destination as input** to this program. Then your result was saved in **two .txt** files in the folder of the program. The current output was saved for the "Imam Khomeini International Airport" as the origin & "Raleigh Durham International Airport" as the destination.
+1. **Algorithm Execution Results:**
+The results of the Dijkstra and A* algorithm executions are saved as .txt files in the project's folder. These results showcase the shortest path and associated costs for any given origin and destination.
 
-<br>
-<br>
+2. **Algorithm Execution Results:**
+On each program run, you provide an origin and destination as input. The program computes the shortest path and saves the results in two .txt files in the project's folder.
+
+3. **Default Example:**
+The current output in the repository is based on the following:
+* **Origin:** Imam Khomeini International Airport
+* **Destination:** Raleigh-Durham International Airport
 
 ## Linear Regression
-We implement Linear Regression from scratch with Numpy and Pandas Libraries.  
-Our task is the prediction of flight price concerning features like duration, arrival time, departure time, and...  
+This project demonstrates the implementation of Linear Regression **from scratch** using the NumPy and Pandas libraries.
+The task involves predicting flight prices based on features such as duration, arrival time, departure time, and more.
 
 ### Pipeline
-1. Reading Dataset
-2. Checking NAN values
-3. Handling Text Features
-4. Feature scaling with Min-Max scaler(Normalization)
-5. Applying Linear Regression
-6. Evaluation With the R2-score, MSE and MAE
-
+1. **Read the Dataset:** Load and preprocess the data.<br>
+2. **Handle Missing Values:** Identify and address any NaN values in the dataset.<br>
+3. **Process Text Features:** Transform text-based features into a usable format.<br>
+4. **Feature Scaling:** Apply Min-Max Scaling (Normalization) to standardize feature values.<br>
+5. **Implement Linear Regression:** Train the model using a custom implementation.<br>
+6. **Evaluate the Model:** Use metrics like R²-score, Mean Squared Error (MSE), and Mean Absolute Error (MAE) to assess performance.
 ### Installation
-
-To Run this project, run these commands:
-
+To run this project, install the required dependencies using the following commands:
 ```python
   pip install numpy
 ```
@@ -64,41 +59,33 @@ To Run this project, run these commands:
   pip install seaborn
 ```
 <br>  
-<br>  
-
 
 ## Markov decision process(MDP)
-This project aims to implement an intelligent agent that exists in a non-deterministic environment. 
+This project implements an intelligent agent operating in a non-deterministic environment. The primary goal is to determine the optimal policy for the agent in this environment.
 
-Our goal is to find the policy for this agent in this non-deterministic environment.
+### Key Insight:
+1. The agent has access to the Transition Model of the environment. <br>  
+2. The Value Iteration algorithm is utilized to compute the optimal policy for the agent.
 
-<br> 
-
-> [!TIP]
-> This agent has the **Transition Model** of the Environment. <br>  
-> We use the **Value Iteration** algorithm to find the policy for the agent.
-
-<br>
-
-> [!IMPORTANT]
-> Agent exists in the "Cliff Walking" environment from the **gymnasium**. You can see the features of this environment in the below link: https://gymnasium.farama.org/environments/toy_text/cliff_walking/
-
-
+### Visualization
+The agent operates in the **"Cliff Walking"** environment from the **gymnasium** library.<br>
+Below is an example of the environment:<br>
 ![Cliff Walking Environment](https://github.com/pouriaSameti/Fundamental-AI/assets/91469214/80a5a081-f9dd-4c0a-9651-2ce2e669a9c0)
 
 
 ### Features
 
-1. implementation of **Value Iteration** algorithm
-2. Checking the Convergence of the algorithm
-3. Calculation of **q-star** matrix & **v-star** list
-4. showing the score of every state with a heatmap
-5. showing the convergence plot
+1. **Implementation of the Value Iteration Algorithm:**
+2. **Algorithm Convergence Check:** Ensures the Value Iteration process reaches stability.
+3. **Calculation of Key Metrics:** 
+* Q*: Optimal state-action values.
+* V*: Optimal state values.
+4. **Heatmap Visualization:** Displays the scores of all states in a visually interpretable format.
+5. **Convergence Plot:** Visualizes the convergence process of the algorithm over iterations.
+
 
 ### Installation
-
-To Run this project, run these commands:
-
+To run this project, install the required dependencies using the following commands:
 ```python
   pip install 'gymnasium[all]'
 ```
@@ -108,38 +95,28 @@ To Run this project, run these commands:
 ```python
   pip install seaborn
 ```
-
 <br>  
-<br>
-
 
 ## Reinforcement Learning
-The goal of this project is to implement an intelligent agent that pays activity in an **unknown environment**.  
-Our goal is to find the policy for this agent in this unknown environment.
- 
-> [!TIP]
-> We use the **q-learning** algorithm to find the policy for the agent.  
-> We used another solution to find the policy. We use **Deep Q-Learning(DQN)** to suggest the best action in every state to the agent.
-
+This project demonstrates the implementation of an intelligent agent that operates in an **unknown environment**. The goal is to determine the optimal policy for the agent to maximize its performance in this environment
 <br>
 
-> [!IMPORTANT]
-> Agent exists in the "Maze" environment from the **gym-maze**. You can see the features of this environment in the below link: https://github.com/MattChanTK/gym-maze
-
-
+### Visualization
+Below is an example of the **gym-maze** environment:<br>
 ![gym-maze Environment](https://github.com/pouriaSameti/Fundamental-AI/assets/91469214/131fd502-2c9f-41b3-9053-e088f87d1f89)
 
 
 ### Features
 
-1. implementation of **q-learning** algorithm
-2. implementation of **Deep Q-Learning** with Keras.
-3. selecting action with **epsilon-greedy** & **approximation_utility**
+1. **Implementation of Q-Learning Algorithm:** A classic reinforcement learning approach for policy determination.
+2. **Deep Q-Learning (DQN)**: Utilizes Keras for building and training deep neural networks.
+3. **Action Selection Strategies:** Includes methods like:
+* Epsilon-Greedy for balancing exploration and exploitation.
+* Approximation Utility to suggest optimal actions based on learned policies.
+
 
 ### Installation
-
-To Run this project, run these commands:
-
+To run this project, install the required dependencies using the following commands:
 ```python
   pip install tensorflow
 ```
@@ -154,69 +131,58 @@ To Run this project, run these commands:
 ```
 
 <br>  
-<br>
 
 ## Game
-The goal of this project is to implement an intelligent agent that works in the **Pacman game** environment and earns the most points.
+This project focuses on creating an intelligent agent to play the **Pacman game**. The goal is to maximize the score by eating dots and strategically avoiding ghosts.
 
 ### Environment
-- In this phase, we use the Pacman environment developed by **UC Berkeley**. 
-- In this environment, your agent pays activity in a maze and eats the small points and some large points. 
-- In this game, the goal is to eat the dots while avoiding the ghosts. By eating the big dots, the situation changes in your favor: for a short time, you can also eat and gain ghosts.
+* The project uses the Pacman environment developed by **UC Berkeley**.
+* In this environment, the agent navigates a maze, eating small dots and large dots to score points.
+* The primary challenge is avoiding ghosts, but by eating large dots, the agent temporarily gains the ability to eat ghosts and earn additional points.
 
 ![pacman Environment](https://github.com/pouriaSameti/Fundamental-AI/assets/91469214/130f90b6-9781-43ef-9ee9-0fc164773e50)
 
-<br>
-
 ### Features
-1. We implement the **Minimax** algorithm to solve the problem.
-2. We use a Heuristic method to guide our agent to catch to the maximum score and finally win this game. 
- 
-<br>
+1. **Minimax Algorithm:** Implemented to solve the multi-agent decision-making problem in the game.
+2. **Heuristic Method:** Developed to guide the agent towards achieving the maximum possible score and ultimately winning the game.
 
-> [!TIP]
->  We have a multi-agent environment. So our problem is winning the game with the maximum score.  
-> We evaluated our heuristic method and caught **100 wins from 100 games** with 1 directional ghost in this game with this heuristic method.
+### Key Insight:
+1. The game is a multi-agent environment, requiring strategic planning to win with the highest score.
+2. Our heuristic method was rigorously tested, achieving **200 wins out of 200 games** with a single directional ghost.
 
 
 
 ### Running The Game
-To run the game with intelligent ghosts, run this command in the folder of the game:
+To run the game with intelligent ghosts, execute the following commands from the game's folder:
 
-1. Running with 1 directional Ghost for 100 times:
+1. Run with 1 directional ghost for 100 games:
 ```python
   python pacman.py -p AIAgent -k 1 -a depth=4 -g DirectionalGhost -n 100
 ```
 <br>
 
-2. Running 1 ghost with stochastic actions:
+2. Run with 1 ghost with stochastic actions:
 ```python
   python pacman.py -p AIAgent -k 1 -a depth=4 -n 100
 ```
 
 ### implementation
-To see the  Minimax algorithm implementation and our heuristic method, go to this path:  **Multi agent search game/multiAgents.py**
-
+To view the implementation of the Minimax algorithm and the heuristic method, navigate to: **Multi agent search game/multiAgents.py**<br>
 <br>  
-<br>
-
 
 ## First order logic(FOL)
-In this project, the goal is to implement a tourist tour recommendation system based on the text received from the user.  
-The goal is to implement this system by using First Order Logic.
-
-Our Task is to design a **Knowledge base** with **Prolog** Language.
+This project focuses on creating a **tourist tour recommendation system** using **First Order Logic (FOL)**. The system processes user-input text about their preferences and recommends a suitable tour. The recommendation is based on a **Knowledge Base** implemented with the **Prolog** language.
 
 ### Features
-1. We implement a graph With input dataset and Prolog.
-2. We can find the first & Second Connected neighbors with Prolog.
-3. We can receive a text from a user about his thoughts about a tour and then suggest to him a tour that matches his text.
-4. This tour is based on the text input from a user and real connected nodes in the Graph.
-
+1. **Graph Representation:** A graph is constructed from the input dataset using Prolog to represent tour connections.
+2. **Neighbor Discovery:** Identify the first and second-degree neighbors of any node in the graph using Prolog queries.
+3. **Tour Recommendation:**
+* Process user input text about their preferences.
+* Suggest a tour that matches their preferences based on the graph’s connected nodes and the knowledge base.
+4. **Knowledge Base Design:** Use Prolog rules and facts to store relationships and enable intelligent query processing.
 
 ### Installation
-
-To Run this project, run these commands:
+To run this project, install the required dependencies using the following commands:
 
 ```python
   pip install numpy
@@ -227,5 +193,3 @@ To Run this project, run these commands:
 ```python
   pip install pyswip
 ```
-
-
